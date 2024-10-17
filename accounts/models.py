@@ -10,10 +10,12 @@ class Organization(models.Model):
     - created_on: DateTimeField to store the date and time when the organization was created.
     - name: CharField to store the name of the organization.
     - profile_picture: ForeignKey to store the profile picture of the organization
+    - removed: BooleanField to store whether the organization is removed or not.
     '''
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ForeignKey(File, on_delete=models.SET_NULL, null=True, blank=True)
+    removed = models.BooleanField(default=False)
 
 
 class CustomUser(AbstractUser):
@@ -27,10 +29,12 @@ class CustomUser(AbstractUser):
     - username: CharField to store the username of the user.
     - organization: ForeignKey to store the organization of the user.
     - profile_picture: ForeignKey to store the profile picture of the user.
+    - removed: BooleanField to store whether the user is removed or not.
     '''
     is_admin = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True, related_name='members')
     profile_picture = models.ForeignKey(File, on_delete=models.SET_NULL, null=True, blank=True)
+    removed = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
         'auth.Group',

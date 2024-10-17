@@ -10,10 +10,11 @@ class OrganizationSerializer(serializers.ModelSerializer):
     created_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     profile_picture = FileSerializer(read_only=True)
     profile_picture_id = serializers.IntegerField(write_only=True, required=False)
+    removed = serializers.BooleanField(write_only=True, required=False)
 
     class Meta:
         model = Organization
-        fields = ['id', 'name', 'created_on', 'profile_picture', 'profile_picture_id']
+        fields = ['id', 'name', 'created_on', 'profile_picture', 'profile_picture_id', 'removed']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,9 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
     organization_id = serializers.IntegerField(write_only=True, required=False)
     profile_picture = FileSerializer(read_only=True)
     profile_picture_id = serializers.IntegerField(write_only=True, required=False)
+    removed = serializers.BooleanField(write_only=True, required=False)
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_admin', 'full_name', 'organization', 'organization_id', 'profile_picture', 'profile_picture_id')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_admin', 'full_name', 'organization', 'organization_id', 'profile_picture', 'profile_picture_id', 'removed')
 
 
 class RegisterSerializer(serializers.ModelSerializer):
