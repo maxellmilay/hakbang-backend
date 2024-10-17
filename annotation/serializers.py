@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from annotation.models import File
+from annotation.models import File, Location, AnnotationForm, Annotation, AnnotationImage
 
 
 class FileSerializer(serializers.ModelSerializer):
