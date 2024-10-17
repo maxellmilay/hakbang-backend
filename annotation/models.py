@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-import json
-
+from django.contrib.auth import get_user_model
 
 class File(models.Model):
     """
@@ -93,7 +92,7 @@ class Annotation(models.Model):
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    annotator = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='user_annotations')
+    annotator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='user_annotations')
     form_data = models.JSONField()
     form_template = models.ForeignKey(AnnotationForm, on_delete=models.SET_NULL, related_name='form_annotations', null=True, blank=True)
     removed = models.BooleanField(default=False)

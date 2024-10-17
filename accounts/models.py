@@ -17,6 +17,9 @@ class Organization(models.Model):
     profile_picture = models.ForeignKey(File, on_delete=models.SET_NULL, null=True, blank=True)
     removed = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.name
+
 
 class CustomUser(AbstractUser):
     '''
