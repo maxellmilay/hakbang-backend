@@ -1,5 +1,7 @@
 # Lakb.ai Backend
 
+-   [Database model](https://app.eraser.io/workspace/lkmTaoGm0ySUxUNpQ5Y2)
+
 ## Setup (Unix)
 
 ### Clone this repository and navigate to root directory
