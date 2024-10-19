@@ -27,10 +27,12 @@ class Coordinates(models.Model):
     Attributes:
         latitude (DecimalField): The latitude of the coordinates.
         longitude (DecimalField): The longitude of the coordinates.
+        removed (BooleanField): Indicates if the coordinates have been marked as removed
     """
 
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    removed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"({self.latitude}, {self.longitude})"
@@ -42,10 +44,14 @@ class Location(models.Model):
 
     Attributes:
         data (JSONField): Stores location data in JSON format.
+        start_coordinates (ForeignKey): The starting coordinates of the location.
+        end_coordinates (ForeignKey): The ending coordinates of the location.
         removed (BooleanField): Indicates if the location has been marked as removed.
     """
 
     data = models.JSONField()
+    start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
+    end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')
     removed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -111,6 +117,7 @@ class Annotation(models.Model):
     annotator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='user_annotations')
     form_data = models.JSONField()
     form_template = models.ForeignKey(AnnotationForm, on_delete=models.SET_NULL, related_name='form_annotations', null=True, blank=True)
+    coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='coordinates_annotations')
     removed = models.BooleanField(default=False)
 
     def __str__(self):
