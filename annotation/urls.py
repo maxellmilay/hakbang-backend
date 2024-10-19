@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LocationView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView
+from .views import LocationView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView, FileView
 
 urlpatterns = [
     path('locations/', LocationView.as_view({'get': 'list', 'post': 'create'}), name='locations'),
@@ -11,4 +11,6 @@ urlpatterns = [
     path('side-panel-annotations/', SidebarAnnotationsView.as_view({'get': 'list'}), name='side_panel_annotations'),
     path('annotation-images/', AnnotationImageView.as_view({'get': 'list', 'post': 'create'}), name='annotation_images'),
     path('annotation-images/<int:pk>/', AnnotationImageView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='annotation_image'),
+    path('files/', FileView.as_view({'post': 'create'}), name='files'),
+    path('files/<int:pk>/', FileView.as_view({'delete': 'destroy'}), name='file'),
 ]

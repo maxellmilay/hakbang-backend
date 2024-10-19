@@ -1,6 +1,6 @@
-from .base_serializers.annotation import LocationSerializer, AnnotationFormSerializer, AnnotationImageSerializer
+from .base_serializers import LocationSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
 from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer
-from .models import Location, AnnotationForm, Annotation
+from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 
 
@@ -26,6 +26,12 @@ class SidebarAnnotationsView(GenericView):
 
 
 class AnnotationImageView(GenericView):
-    queryset = Annotation.objects.filter(removed=False)
+    queryset = AnnotationImage.objects.all()
     serializer_class = AnnotationImageSerializer
     filter_fields = ['annotation_id']
+
+
+class FileView(GenericView):
+    queryset = File.objects.filter(removed=False)
+    serializer_class = FileSerializer
+    allowed_methods = ['create', 'delete']
