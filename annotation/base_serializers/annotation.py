@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from annotation.models import Location, AnnotationForm, Annotation, AnnotationImage, Coordinates
 from .file import FileSerializer
-# from accounts.serializers import UserSerializer
 
 
 class CoordinatesSerializer(serializers.ModelSerializer):
@@ -53,4 +52,14 @@ class AnnotationBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Annotation
+        fields = '__all__'
+
+
+class AnnotationImageSerializer(serializers.ModelSerializer):
+    file = FileSerializer(read_only=True)
+    file_id = serializers.IntegerField(write_only=True)
+    annotation_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = AnnotationImage
         fields = '__all__'
