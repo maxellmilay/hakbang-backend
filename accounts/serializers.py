@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from accounts.models import CustomUser, Organization
 
-from annotation.serializers import FileSerializer
+from annotation.base_serializers.file import FileSerializer
 
 
 class OrganizationSerializer(serializers.ModelSerializer):

@@ -76,6 +76,7 @@ class AnnotationForm(models.Model):
     Represents a template for annotation forms.
 
     Attributes:
+        name (CharField): The name of the form.
         data (JSONField): Stores form template data in JSON format.
         created_on (DateTimeField): The date and time when the form was created (auto-set).
         updated_on (DateTimeField): The date and time when the form was last updated (auto-set).

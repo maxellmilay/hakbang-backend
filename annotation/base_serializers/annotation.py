@@ -1,13 +1,6 @@
 from rest_framework import serializers
-from annotation.models import File, Location, AnnotationForm, Annotation, AnnotationImage, Coordinates
-
-
-class FileSerializer(serializers.ModelSerializer):
-    created_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
-
-    class Meta:
-        model = File
-        fields = '__all__'
+from annotation.models import Location, AnnotationForm, Annotation, AnnotationImage, Coordinates
+# from accounts.serializers import UserSerializer
 
 
 class CoordinatesSerializer(serializers.ModelSerializer):
@@ -36,12 +29,16 @@ class AnnotationFormSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Annotation(serializers.ModelSerializer):
-    location = LocationSerializer()
-    annotator = serializers.CharField(source='annotator.username')
-    form_template = AnnotationFormSerializer()
+class AnnotationBaseSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(read_only=True)
+    location_id = serializers.IntegerField(write_only=True)
     created_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     updated_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    annotator_id = serializers.IntegerField(write_only=True)
+    form_template = AnnotationFormSerializer(read_only=True)
+    form_template_id = serializers.IntegerField(write_only=True)
+    coordinates = CoordinatesSerializer(read_only=True)
+    coordinates_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Annotation

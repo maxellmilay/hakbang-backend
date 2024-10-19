@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from .serializers import LocationSerializer, AnnotationFormSerializer
-from .models import Location, AnnotationForm
+from .base_serializers.annotation import LocationSerializer, AnnotationFormSerializer
+from .serializers.annotation import AnnotationSerializer
+from .models import Location, AnnotationForm, Annotation
 from main.utils.generic_api import GenericView
 
 
@@ -12,3 +12,8 @@ class LocationView(GenericView):
 class AnnotationFormView(GenericView):
     queryset = AnnotationForm.objects.filter(removed=False)
     serializer_class = AnnotationFormSerializer
+
+
+class AnnotationView(GenericView):
+    queryset = Annotation.objects.filter(removed=False)
+    serializer_class = AnnotationSerializer
