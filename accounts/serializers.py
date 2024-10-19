@@ -36,3 +36,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = str(refresh.access_token)
         data['user'] = UserSerializer(self.user).data
         return data
+
+
+class UsernameAndEmailCheckerSerializer(UserSerializer):
+    class Meta:
+        model = UserSerializer.Meta.model
+        fields = ['username', 'email']
+        read_only_fields = ['username', 'email']

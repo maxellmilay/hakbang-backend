@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import UserSerializer, CustomTokenObtainPairSerializer, OrganizationSerializer
+from .serializers import UserSerializer, CustomTokenObtainPairSerializer, OrganizationSerializer, UsernameAndEmailCheckerSerializer
 from .models import CustomUser, Organization
 from main.utils.generic_api import GenericView
 
@@ -41,3 +41,10 @@ class LogoutView(APIView):
     def post(self, request):
         # Perform any logout actions if needed
         return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
+class UsernameAndEmailCheckerView(GenericView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UsernameAndEmailCheckerSerializer
+    filter_fields = ['username', 'email']
+    allowed_methods = ['list']
