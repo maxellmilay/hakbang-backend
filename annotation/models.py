@@ -43,12 +43,16 @@ class Location(models.Model):
     Represents a location with flexible data structure.
 
     Attributes:
+        accessibility_score (DecimalField): The accessibility score of the location
+        adjacent_street (CharField): The name of the adjacent street.
         data (JSONField): Stores location data in JSON format.
         start_coordinates (ForeignKey): The starting coordinates of the location.
         end_coordinates (ForeignKey): The ending coordinates of the location.
         removed (BooleanField): Indicates if the location has been marked as removed.
     """
 
+    accessibility_score = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
+    adjacent_street = models.CharField(max_length=255, blank=True, null=True)
     data = models.JSONField()
     start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
     end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')
