@@ -23,12 +23,14 @@ class SidebarAnnotationsView(GenericView):
     queryset = Annotation.objects.filter(removed=False).order_by('-updated_on')
     serializer_class = SidebarAnnotationsSerializer
     filter_fields = ['annotator_id']
+    allowed_methods = ['list']
 
 
-class AnnotationNameCheckerSerializerView(GenericView):
+class AnnotationNameCheckerView(GenericView):
     queryset = Annotation.objects.filter(removed=False)
     serializer_class = AnnotationNameCheckerSerializer
     filter_fields = ['name']
+    allowed_methods = ['list']
 
 
 class AnnotationImageView(GenericView):

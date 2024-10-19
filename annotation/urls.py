@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LocationView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView, FileView, AnnotationNameCheckerSerializerView
+from .views import LocationView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView, FileView, AnnotationNameCheckerView
 
 urlpatterns = [
     path('locations/', LocationView.as_view({'get': 'list', 'post': 'create'}), name='locations'),
@@ -13,5 +13,5 @@ urlpatterns = [
     path('annotation-images/<int:pk>/', AnnotationImageView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='annotation_image'),
     path('files/', FileView.as_view({'post': 'create'}), name='files'),
     path('files/<int:pk>/', FileView.as_view({'delete': 'destroy'}), name='file'),
-    path('annotation-name-checker/', AnnotationNameCheckerSerializerView.as_view({'get': 'list'}), name='annotation_name_checker'),
+    path('annotation-name-checker/', AnnotationNameCheckerView.as_view({'get': 'list'}), name='annotation_name_checker'),
 ]
