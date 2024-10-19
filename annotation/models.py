@@ -20,6 +20,22 @@ class File(models.Model):
         return self.url
 
 
+class Coordinates(models.Model):
+    """
+    Represents a pair of coordinates.
+
+    Attributes:
+        latitude (DecimalField): The latitude of the coordinates.
+        longitude (DecimalField): The longitude of the coordinates.
+    """
+
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+
+    def __str__(self):
+        return f"({self.latitude}, {self.longitude})"
+
+
 class Location(models.Model):
     """
     Represents a location with flexible data structure.
