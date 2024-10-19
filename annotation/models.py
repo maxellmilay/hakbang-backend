@@ -76,20 +76,14 @@ class AnnotationForm(models.Model):
         removed (BooleanField): Indicates if the form has been marked as removed.
     """
 
-    data = models.JSONField()
+    name = models.CharField(max_length=255)
+    form_data = models.JSONField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     removed = models.BooleanField(default=False)
 
     def __str__(self):
-        try:
-            return self.data.get('name', str(self.id))
-        except AttributeError:
-            return str(self.id)
-    
-    def clean(self):
-        if not isinstance(self.data, dict):
-            raise ValidationError("Data must be a dictionary")
+        return self.name
 
     class Meta:
         ordering = ['-updated_on']
