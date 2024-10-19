@@ -49,7 +49,7 @@ class GenericView(viewsets.ViewSet):
     cache_duration = 60 * 60  # cache duration in seconds
 
     def __init__(self):
-        if not self.queryset or not self.serializer_class:
+        if self.queryset is None or not self.serializer_class:
             raise NotImplementedError('queryset and serializer_class must be defined')
 
     # CRUD operations
