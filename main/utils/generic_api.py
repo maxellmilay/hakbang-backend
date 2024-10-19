@@ -122,7 +122,11 @@ class GenericView(viewsets.ViewSet):
         instance = get_object_or_404(self.queryset, pk=pk)
         self.delete_cache(pk)
         self.invalidate_list_cache()
-        instance.delete()
+        if hasattr(instance, 'removed'):
+            instance.removed = True
+            instance.save(update_fields=['removed'])
+        else:
+            instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Cache operations
