@@ -1,5 +1,5 @@
 from .base_serializers import LocationSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
-from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer
+from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer
 from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 
@@ -23,6 +23,12 @@ class SidebarAnnotationsView(GenericView):
     queryset = Annotation.objects.filter(removed=False).order_by('-updated_on')
     serializer_class = SidebarAnnotationsSerializer
     filter_fields = ['annotator_id']
+
+
+class AnnotationNameCheckerSerializerView(GenericView):
+    queryset = Annotation.objects.filter(removed=False)
+    serializer_class = AnnotationNameCheckerSerializer
+    filter_fields = ['name']
 
 
 class AnnotationImageView(GenericView):

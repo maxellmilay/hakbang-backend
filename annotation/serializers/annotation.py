@@ -14,3 +14,9 @@ class SidebarAnnotationsSerializer(AnnotationSerializer):
     class Meta:
         model = AnnotationSerializer.Meta.model
         fields = ['id', 'updated_on', 'location', 'name']
+
+
+class AnnotationNameCheckerSerializer(AnnotationBaseSerializer):
+    class Meta:
+        model = AnnotationBaseSerializer.Meta.model
+        fields = ['name']
