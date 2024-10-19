@@ -1,5 +1,5 @@
 from .base_serializers.annotation import LocationSerializer, AnnotationFormSerializer
-from .serializers.annotation import AnnotationSerializer
+from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer
 from .models import Location, AnnotationForm, Annotation
 from main.utils.generic_api import GenericView
 
@@ -17,3 +17,9 @@ class AnnotationFormView(GenericView):
 class AnnotationView(GenericView):
     queryset = Annotation.objects.filter(removed=False)
     serializer_class = AnnotationSerializer
+
+
+class SidebarAnnotationsView(GenericView):
+    queryset = Annotation.objects.filter(removed=False).order_by('-updated_on')
+    serializer_class = SidebarAnnotationsSerializer
+    filter_fields = ['annotator_id']

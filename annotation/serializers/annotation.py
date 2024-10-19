@@ -8,3 +8,9 @@ class AnnotationSerializer(AnnotationBaseSerializer):
     class Meta:
         model = AnnotationBaseSerializer.Meta.model
         fields = '__all__'
+
+
+class SidebarAnnotationsSerializer(AnnotationSerializer):
+    class Meta:
+        model = AnnotationSerializer.Meta.model
+        fields = ['id', 'updated_on', 'location', 'name']
