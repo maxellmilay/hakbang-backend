@@ -2,6 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
 class File(models.Model):
     """
     Represents a file in the system.
@@ -112,7 +114,7 @@ class Annotation(models.Model):
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    annotator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='user_annotations')
+    annotator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_annotations')
     form_data = models.JSONField()
     form_template = models.ForeignKey(AnnotationForm, on_delete=models.SET_NULL, related_name='form_annotations', null=True, blank=True)
     coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='coordinates_annotations')

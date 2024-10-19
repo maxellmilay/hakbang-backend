@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from annotation.models import File
-
 
 class Organization(models.Model):
     '''
@@ -14,7 +12,7 @@ class Organization(models.Model):
     '''
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    profile_picture = models.ForeignKey(File, on_delete=models.SET_NULL, null=True, blank=True)
+    profile_picture = models.ForeignKey('annotation.File', on_delete=models.SET_NULL, null=True, blank=True)
     removed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -36,7 +34,7 @@ class CustomUser(AbstractUser):
     '''
     is_admin = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True, related_name='members')
-    profile_picture = models.ForeignKey(File, on_delete=models.SET_NULL, null=True, blank=True)
+    profile_picture = models.ForeignKey('annotation.File', on_delete=models.SET_NULL, null=True, blank=True)
     removed = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
