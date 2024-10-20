@@ -145,4 +145,4 @@ class AnnotationImage(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE, related_name='images')
 
     def __str__(self):
-        return self.image.url
+        return self.file.url
