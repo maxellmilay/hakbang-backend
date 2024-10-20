@@ -13,7 +13,7 @@ class AnnotationSerializer(AnnotationBaseSerializer):
 class SimpleLocationSerializer(LocationSerializer):
     class Meta:
         model = LocationSerializer.Meta.model
-        fields = ['accessibility_score', 'start_coordinates', 'end_coordinates']
+        fields = ['accessibility_score', 'start_coordinates', 'end_coordinates', 'id']
 
 
 class SidebarAnnotationsSerializer(AnnotationSerializer):
