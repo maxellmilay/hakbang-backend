@@ -17,12 +17,9 @@ djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 idna==3.10
 jmespath==1.0.1
-<<<<<<< HEAD
 kombu==5.4.2
 prompt_toolkit==3.0.48
 psycopg2==2.9.9
-=======
->>>>>>> origin/main
 psycopg2-binary==2.9.9
 PyJWT==2.9.0
 python-dateutil==2.9.0.post0
@@ -34,10 +31,7 @@ sqlparse==0.5.1
 typing_extensions==4.12.2
 tzdata==2024.2
 urllib3==2.2.3
-<<<<<<< HEAD
 vine==5.1.0
 wcwidth==0.2.13
-=======
 gunicorn==20.1.0
 whitenoise==6.5.0
->>>>>>> origin/main
