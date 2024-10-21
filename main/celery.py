@@ -15,4 +15,4 @@ app.autodiscover_tasks(['annotation.utils'])
 @worker_ready.connect
 def at_start(sender, **kwargs):
     from annotation.utils.accessibility_score import recalculate_scores
-    recalculate_scores.apply_async(args=[5])
+    recalculate_scores.apply_async(args=[5]) # change this to 60*60*60 for 1 hour interval
