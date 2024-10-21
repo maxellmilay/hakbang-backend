@@ -3,6 +3,11 @@ from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSeri
 from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 
+from django.db import transaction
+from rest_framework import status
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
 
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False)
@@ -18,6 +23,43 @@ class AnnotationFormView(GenericView):
 class AnnotationView(GenericView):
     queryset = Annotation.objects.filter(removed=False)
     serializer_class = AnnotationSerializer
+
+    @transaction.atomic
+    def create(self, request):
+        if 'create' not in self.allowed_methods:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            self.cache_object(serializer.data, instance.pk)
+            self.invalidate_list_cache()
+
+            location = Location.objects.get(id=instance.location_id)
+            # calculate accessibility score
+            # update location accessibility score
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @transaction.atomic
+    def update(self, request, pk=None):
+        if 'update' not in self.allowed_methods:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            self.cache_object(serializer.data, pk)
+            self.invalidate_list_cache()
+
+            location = Location.objects.get(id=instance.location_id)
+            # recalculate accessibility score
+            # update location accessibility score
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SidebarAnnotationsView(GenericView):
