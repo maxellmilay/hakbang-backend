@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-pd+s1pey@#b+3)q9l^l=lupu(=7=m-!jl*!yyo1x6#8e+!4s2a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['lakbai-backend-68526709541.us-central1.run.app']
+ALLOWED_HOSTS = ['lakbai-backend-68526709541.us-central1.run.app', 'localhost']
 
 # Application definition
 
