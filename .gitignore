@@ -63,10 +63,6 @@ build/
 dist/
 *.egg-info/
 
-# Docker
-docker-compose*.yml
-.dockerignore
-
 # Generated files
 *.pot
 *.pyc
