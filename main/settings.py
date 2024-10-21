@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'annotation',
     'accounts',
+    'main'
 ]
 
 MIDDLEWARE = [

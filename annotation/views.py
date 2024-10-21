@@ -7,6 +7,7 @@ from main.utils.generic_api import GenericView
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False)
     serializer_class = LocationSerializer
+    size_per_request = 1000
 
 
 class AnnotationFormView(GenericView):

@@ -32,9 +32,12 @@ class Coordinates(models.Model):
         removed (BooleanField): Indicates if the coordinates have been marked as removed
     """
 
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.CharField(max_length=255)
+    longitude = models.CharField(max_length=255)
     removed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('latitude', 'longitude')
 
     def __str__(self):
         return f"({self.latitude}, {self.longitude})"
@@ -59,6 +62,9 @@ class Location(models.Model):
     start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
     end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')
     removed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('start_coordinates', 'end_coordinates')
 
     def __str__(self):
         try:
