@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 import json
 import os
 
+from decimal import Decimal
+
 from annotation.models import Coordinates, Location
 
 class Command(BaseCommand):
@@ -64,7 +66,7 @@ class Command(BaseCommand):
             if not location_exists:
                 # Create Location object
                 location = Location(
-                    accessibility_score=None,  # Set as needed
+                    accessibility_score=round(Decimal(0.9), 2),  # Set as needed
                     adjacent_street=properties.get('nearestStreet'),
                     data=properties,
                     start_coordinates=start_coordinates,

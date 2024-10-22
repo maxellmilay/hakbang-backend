@@ -13,10 +13,6 @@ log/
 .DS_Store
 Thumbs.db
 
-# Ignore environment files (you might want to keep these out of your image)
-.env
-.env.*.local
-
 # Ignore build-related files (if applicable)
 build
 dist
