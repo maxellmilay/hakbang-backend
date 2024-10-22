@@ -40,6 +40,9 @@ class AnnotationView(GenericView):
             self.invalidate_list_cache()
 
             location = Location.objects.get(id=instance.location_id)
+
+            location.accessibility_score = 1 # temporary
+            location.save() # temporary
             # calculate accessibility score
             # update location accessibility score
 
