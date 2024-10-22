@@ -88,8 +88,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'main.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# DATABASES
+#  - uncomment each to switch databases
 
 # # SQLite
 # DATABASES = {
@@ -99,12 +99,14 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #     }
 # }
 
+# # Render (Does not load map)
 # DATABASES = {
 #     'default': dj_database_url.config(
 #         default=os.getenv('EXTERNAL_DB_URL')
 #     )
 # }
 
+# Google Cloud SQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
