@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 import json
 import os
+import random
 
-from decimal import Decimal
-
-from annotation.models import Coordinates, Location
+from annotation.models import Coordinates, Location, AnnotationForm
 
 class Command(BaseCommand):
     help = 'Populate the database with GeoJSON data from a .json file'
@@ -66,7 +66,7 @@ class Command(BaseCommand):
             if not location_exists:
                 # Create Location object
                 location = Location(
-                    accessibility_score=round(Decimal(0.9), 2),  # Set as needed
+                    accessibility_score=None,  # Set as needed
                     adjacent_street=properties.get('nearestStreet'),
                     data=properties,
                     start_coordinates=start_coordinates,
@@ -85,3 +85,27 @@ class Command(BaseCommand):
                         f'Location from {start_coordinates} to {end_coordinates} already exists. Skipping.'
                     )
                 )
+        
+        # Create admin user
+        User = get_user_model()
+        x = User.objects.create_superuser('admin', '', '123')
+        x.first_name = "Mandaue"
+        x.last_name = "Annotator"
+        x.save()
+
+        # Create initial form template
+        name = random.choice(["Form A", "Form B", "Form C", "Form D"])
+        form_data = {
+            "fields": [
+                {"field_name": "Field1", "field_type": random.choice(["text", "number", "checkbox"])},
+                {"field_name": "Field2", "field_type": random.choice(["text", "number", "checkbox"])},
+                {"field_name": "Field3", "field_type": random.choice(["text", "number", "checkbox"])},
+            ]
+        }
+        removed = random.choice([True, False])
+
+        AnnotationForm.objects.create(
+            name=name,
+            form_data=form_data,
+            removed=removed
+        )
