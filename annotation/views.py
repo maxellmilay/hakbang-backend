@@ -28,6 +28,10 @@ class AnnotationView(GenericView):
     def create(self, request):
         if 'create' not in self.allowed_methods:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        location_id = request.data.get('location_id')
+        start_coordinates_id = Location.objects.get(id=location_id).start_coordinates_id
+        request.data['coordinates_id'] = start_coordinates_id
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():

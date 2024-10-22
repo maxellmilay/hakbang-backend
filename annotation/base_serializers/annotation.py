@@ -62,4 +62,4 @@ class AnnotationImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnnotationImage
-        fields = '__all__'
+        fields = ['id', 'file', 'file_id', 'annotation_id']
