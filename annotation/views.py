@@ -10,8 +10,9 @@ from django.shortcuts import get_object_or_404
 
 
 class LocationView(GenericView):
-    queryset = Location.objects.filter(removed=False)
+    queryset = Location.objects.filter(removed=False).order_by('accessibility_score')
     serializer_class = LocationSerializer
+    size_per_request = 20
 
 
 class AnnotationFormView(GenericView):
