@@ -72,3 +72,6 @@ coverage.xml
 
 # Google Cloud
 key.json
+
+# Others
+flood/
