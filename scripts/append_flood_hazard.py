@@ -43,4 +43,4 @@ for feature in data['features']:
 with open('main/data/updated_mandaue.json', 'w') as file:
     json.dump(data, file, indent=4)
 
-print("Hazard values updated and saved to 'updated_mandaue.json'")
+print("Hazard values updated and saved to 'mandaue_with_hazard.json'")
