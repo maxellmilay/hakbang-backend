@@ -175,7 +175,10 @@ class GenericView(viewsets.ViewSet):
         return filters, excludes
 
     def get_pagination_params(self, filters):
+        page = filters.pop('page', None)
         top = int(filters.pop('top', 0))
+        if page is not None:
+            top = (int(page) - 1) * self.size_per_request
         bottom = filters.pop('bottom', None)
         if bottom:
             bottom = int(bottom)

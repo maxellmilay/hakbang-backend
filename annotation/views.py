@@ -12,7 +12,6 @@ from django.shortcuts import get_object_or_404
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False)
     serializer_class = LocationSerializer
-    size_per_request = 1000
 
 
 class AnnotationFormView(GenericView):
