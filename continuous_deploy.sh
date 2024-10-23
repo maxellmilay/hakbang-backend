@@ -13,6 +13,8 @@ TAG="latest"
 IMAGE_NAME=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
 IMAGE_URI=$IMAGE_NAME:$TAG
 
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
 # Build Docker image
 docker build -t $IMAGE_URI .
 
