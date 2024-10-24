@@ -2,8 +2,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
-
 class File(models.Model):
     """
     Represents a file in the system.
@@ -56,9 +54,27 @@ class Location(models.Model):
         removed (BooleanField): Indicates if the location has been marked as removed.
     """
 
+    ANCHOR_A = '123.9419001850121,10.327600060884297'
+    ANCHOR_B = '123.94220321636607,10.328668797875494'
+    ANCHOR_C = '123.94318663887299,10.327099440742616'
+    ANCHOR_D = '123.94351254051777,10.328185054214456'
+    ANCHOR_E = '123.94495908641485,10.32757193618587'
+    ANCHOR_F = '123.94445022244315,10.326536945241577'
+
+    ANCHOR_CHOICES = (
+        (ANCHOR_A, 'Anchor A'),
+        (ANCHOR_B, 'Anchor B'),
+        (ANCHOR_C, 'Anchor C'),
+        (ANCHOR_D, 'Anchor D'),
+        (ANCHOR_E, 'Anchor E'),
+        (ANCHOR_F, 'Anchor F'),
+    )
+
     accessibility_score = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     adjacent_street = models.CharField(max_length=255, blank=True, null=True)
     data = models.JSONField()
+    results = models.JSONField()
+    anchor = models.CharField(max_length=50, choices=ANCHOR_CHOICES, default=ANCHOR_C)
     start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
     end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')
     removed = models.BooleanField(default=False)
@@ -116,6 +132,31 @@ class Annotation(models.Model):
         form_template (ForeignKey): The template used for this annotation, if any.
         removed (BooleanField): Indicates if the annotation has been marked as removed.
     """
+    User = get_user_model()
+
+    FLOOD_HAZARD = {
+        '0': 0,
+        '1': 0,
+        '2': 1,
+        '3': 2
+    }
+
+    BORDER_BUFFER = {
+        'No': 0,
+        'Yes': 1
+    }
+
+    LIGHTING_CONDITION = {
+        'Poor': 1,
+        'Adequate': 2,
+        'Excellent': 3
+    }
+
+    ZONING_AREA = {
+        'City Core Commercial': 1,
+        'Residential': 2,
+        'Industrial': 3
+    }
 
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='annotations')
     name = models.CharField(max_length=255)

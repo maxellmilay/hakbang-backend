@@ -1,14 +1,109 @@
 import time
+import json
+import pickle
+import random
+
+from django.core.exceptions import ValidationError
+
 from annotation.utils.weather import get_weather_data
+from annotation.utils.fis.fis import FuzzyInferenceSystem
+from annotation.utils.logreg.predict import get_probabilities
 
 
-def calculate_accessibility_score():
+def update_accessibility_scores():
+    from annotation.models import Location
+    from annotation.models import Annotation
+
     while True:
         print("Calculating accessibility score...")
 
-        latitude = 10.327653161715238
-        longitude = 123.94290770399293
+        with open('models/logistic_regression_model.pkl', 'rb') as file:
+            model = pickle.load(file)
 
-        get_weather_data(latitude, longitude)
+        anchored_weather_data = {}
 
-        time.sleep(60*30)
+        for coordinates_string, _ in Location.ANCHOR_CHOICES:
+            coordinates = coordinates_string.split(',')
+            longitude = float(coordinates[0])
+            latitude = float(coordinates[1])
+            weather_data = get_weather_data(latitude, longitude)
+            anchored_weather_data[coordinates_string] = weather_data
+
+        # get static data from DB
+        locations = Location.objects.all()
+
+        for location in locations:
+            accessibility_score, results = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+
+            location.accessibility_score = accessibility_score
+            location.results = results
+
+            try:
+                location.full_clean()
+                location.save()
+            except ValidationError as e:
+                print('ERROR: ',e)
+
+        time.sleep(10)
+
+def calculate_accessibility_score(location, model, anchored_weather_data, Annotation):
+    annotation_data = location.annotations.all()
+
+    if not annotation_data['sidewalkPresence']:
+        return 0
+
+    if len(annotation_data) == 0:
+        return None
+
+    location_data = location.data
+    
+    annotation_data = annotation_data.first()
+    annotation_data = json.loads(annotation_data)
+
+    flood_hazard_index = Annotation.FLOOD_HAZARD[str(location_data['hazard'])]
+
+    weather = anchored_weather_data[location.anchor]
+
+    zoning_area_index = Annotation.ZONING_AREA[location_data['zone']]
+
+    border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']]
+    lighting_index = Annotation.LIGHTING_CONDITION[annotation_data['lightingCondition']]
+
+    input = {
+        'flood_risk': flood_hazard_index,
+        'heat_index': weather['heat_index'],
+        'precipitation': weather['precipitation'],
+        'key_areas': sum(location_data['nearPlacesFrequency'].values()),
+        'population': location_data['population']/1000,
+        'walkway_width': annotation_data['sidewalkWidth'],
+        'zone_area': zoning_area_index,
+        'gradient': annotation_data['rampGradient'],
+        'surface': annotation_data['sidewalkCondition'],
+        'street_furniture': annotation_data['streetFurniture'],
+        'border_buffer': border_buffer_index,
+        'lighting': lighting_index
+    }
+    
+    fis = FuzzyInferenceSystem(input)
+
+    crisp_weather_condition = fis.crisp_weather_condition
+    crisp_urban_density = fis.crisp_urban_density
+    crisp_sidewalk_capacity = fis.crisp_sidewalk_capacity
+    crisp_safety_risk = fis.crisp_safety_risk
+    raw_accessibility = fis.accessibility
+
+    results = {
+        'crisp_weather_condition': crisp_weather_condition,
+        'crisp_urban_density': crisp_urban_density,
+        'crisp_sidewalk_capacity': crisp_sidewalk_capacity,
+        'crisp_safety_risk': crisp_safety_risk,
+        'raw_accessibility': raw_accessibility
+    }
+
+    input_data = [[crisp_weather_condition,crisp_urban_density,crisp_sidewalk_capacity,crisp_safety_risk]]
+
+    probabilities = get_probabilities(model,input_data)
+
+    accessibility_probability = probabilities[0][1]
+
+    return accessibility_probability, results

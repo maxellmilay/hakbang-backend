@@ -1,17 +1,20 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 
-from annotation.models import Annotation
+from annotation.models import Annotation, Location
 
 class Command(BaseCommand):
-    help = 'Populate the database with GeoJSON data from a .json file'
+    help = 'Reset Annotations'
 
-    def add_arguments(self, parser):
-        parser.add_argument('geojson_file_path', type=str, help='Path to the GeoJSON file')
-
-    def handle(self):
+    def handle(self, *args, **options):
         try:
             Annotation.objects.all().delete()
+            locations = Location.objects.filter(accessibility_score__isnull=False)
+            for location in locations:
+                location.accessibility_score = None
+                location.full_clean()
+                location.save()
+
             self.stdout.write(self.style.SUCCESS(f'Successfully deleted all annotations'))
         except ValidationError as e:
             self.stdout.write(self.style.ERROR(f'ValidationError: {e}'))

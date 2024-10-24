@@ -17,19 +17,21 @@ def get_weather_data(lat, lng):
         response = requests.get(url)
         data = response.json()
 
-        temperature = data['main']['temp']
+        T_celsius = data['main']['temp']
         humidity = data['main']['humidity']
         precipitation = data.get('rain', {}).get('1h', 0)  # Precipitation in mm/hr
 
+        T_fahrenheit = (T_celsius * 9/5) + 32
+
         # Calculate the heat index
-        heat_index = calculate_heat_index(temperature, humidity)
+        heat_index = calculate_heat_index(T_fahrenheit, humidity)
 
         # Categorize heat index and precipitation
         heat_index_category = get_heat_index_category(heat_index)
         precipitation_category = get_precipitation_category(precipitation)
 
         # Log results
-        print(f'Temperature: {temperature}°C')
+        print(f'Temperature: {T_celsius}°C')
         print(f'Humidity: {humidity}%')
         print(f'Heat Index: {heat_index:.2f}°C')
         print(f'Heat Index Category: {heat_index_category}')
@@ -37,7 +39,7 @@ def get_weather_data(lat, lng):
         print(f'Precipitation Category: {precipitation_category}')
 
         return {
-            'temperature': temperature,
+            'temperature': T_celsius,
             'humidity': humidity,
             'heat_index': heat_index,
             'heat_index_category': heat_index_category,
