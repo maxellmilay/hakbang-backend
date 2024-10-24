@@ -50,13 +50,13 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     annotation = location.annotations.all()
 
     if len(annotation) == 0:
-        return None
+        return {'accessibility_probability':None, 'results':None}
 
     annotation_data = annotation.first().form_data
     annotation_data = json.loads(annotation_data)
 
     if not annotation_data['sidewalkPresence']:
-        return 0
+        return {'accessibility_probability':0, 'results':None}
 
     location_data = location.data
 
