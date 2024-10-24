@@ -2,6 +2,7 @@ import time
 import json
 import pickle
 import random
+import numpy as np
 
 from django.core.exceptions import ValidationError
 
@@ -103,10 +104,12 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
         "raw_accessibility": raw_accessibility
     }
 
+    converted_results = {k: (int(v) if isinstance(v, np.int64) else float(v) if isinstance(v, np.float64) else v) for k, v in results.items()}
+
     input_data = [[crisp_weather_condition,crisp_urban_density,crisp_sidewalk_capacity,crisp_safety_risk]]
 
     probabilities = get_probabilities(model,input_data)
 
     accessibility_probability = probabilities[0][1]
 
-    return {'accessibility_probability':accessibility_probability, 'results':results}
+    return {'accessibility_probability':accessibility_probability, 'results':converted_results}
