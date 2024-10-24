@@ -24,3 +24,8 @@ dj-database-url==1.2.0
 python-dotenv==1.0.1
 shapely==2.0.6
 geopandas==1.0.1
+fuzzylogic==1.2.0
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.7.1
+scikit-learn==1.5.2
