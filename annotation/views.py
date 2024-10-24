@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 
 import pickle
+import json
 
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False).order_by('accessibility_score')
@@ -57,6 +58,7 @@ class AnnotationView(GenericView):
             anchored_weather_data[location.anchor] = weather_data
 
             annotation_data = request.data['form_data']
+            annotation_data = json.loads(annotation_data)
 
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
