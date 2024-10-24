@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 
 import pickle
 import json
+from decimal import Decimal
 
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False).order_by('accessibility_score')
@@ -64,14 +65,15 @@ class AnnotationView(GenericView):
 
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
-            rounded_accessibility_score = round(data['accessibility_probability'],2)
+            rounded_accessibility_score = round(Decimal(data['accessibility_probability']), 2)
+            dumped_results = json.dumps(data['results'])
 
             print('NNNNNNNNNNNNNNNNNNNNNNNNNNNN', rounded_accessibility_score)
 
-            print('OOOOOOOOOOOOOOOOOOOOOOOOOOOO', data['results'])
+            print('OOOOOOOOOOOOOOOOOOOOOOOOOOOO', dumped_results)
 
             location.accessibility_score = rounded_accessibility_score
-            location.results = data['results']
+            location.results = dumped_results
 
             try:
                 location.full_clean()
