@@ -61,19 +61,10 @@ class AnnotationView(GenericView):
             annotation_data = request.data['form_data']
             annotation_data = json.loads(annotation_data)
 
-            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', annotation_data)
-
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
-            rounded_accessibility_score = round(Decimal(data['accessibility_probability']), 2)
-            dumped_results = json.dumps(data['results'])
-
-            print('NNNNNNNNNNNNNNNNNNNNNNNNNNNN', rounded_accessibility_score)
-
-            print('OOOOOOOOOOOOOOOOOOOOOOOOOOOO', dumped_results)
-
-            location.accessibility_score = rounded_accessibility_score
-            location.results = dumped_results
+            location.accessibility_score = data['accessibility_probability']
+            location.results = data['results']
 
             try:
                 location.full_clean()

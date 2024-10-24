@@ -3,13 +3,13 @@ import json
 import pickle
 import random
 import numpy as np
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 
 from annotation.utils.weather import get_weather_data
 from annotation.utils.fis.fis import FuzzyInferenceSystem
 from annotation.utils.logreg.predict import get_probabilities
-
 
 def update_accessibility_scores():
     from annotation.models import Location
@@ -36,7 +36,7 @@ def update_accessibility_scores():
         for location in locations:
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
 
-            location.accessibility_score = data['accessibility_score']
+            location.accessibility_score = data['accessibility_probability']
             location.results = data['results']
 
             try:
@@ -105,11 +105,13 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     }
 
     converted_results = {k: (int(v) if isinstance(v, np.int64) else float(v) if isinstance(v, np.float64) else v) for k, v in results.items()}
+    converted_results = json.dumps(converted_results)
 
     input_data = [[crisp_weather_condition,crisp_urban_density,crisp_sidewalk_capacity,crisp_safety_risk]]
 
     probabilities = get_probabilities(model,input_data)
 
     accessibility_probability = probabilities[0][1]
+    accessibility_probability = round(Decimal(accessibility_probability), 2)
 
     return {'accessibility_probability':accessibility_probability, 'results':converted_results}
