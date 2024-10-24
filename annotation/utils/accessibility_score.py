@@ -33,10 +33,10 @@ def update_accessibility_scores():
         locations = Location.objects.all()
 
         for location in locations:
-            accessibility_score, results = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
 
-            location.accessibility_score = accessibility_score
-            location.results = results
+            location.accessibility_score = data['accessibility_score']
+            location.results = data['results']
 
             try:
                 location.full_clean()
@@ -106,4 +106,4 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
 
     accessibility_probability = probabilities[0][1]
 
-    return accessibility_probability, results
+    return {'accessibility_probability':accessibility_probability, 'results':results}
