@@ -49,8 +49,8 @@ def update_accessibility_scores():
 def calculate_accessibility_score(location, model, anchored_weather_data, Annotation):
     annotation = location.annotations.all()
 
-    if len(annotation) == 0:
-        return {'accessibility_probability': None, 'results': None}
+    # if len(annotation) == 0:
+    #     return {'accessibility_probability': None, 'results': None}
 
     annotation_data = annotation.first().form_data
     annotation_data = json.loads(annotation_data)
