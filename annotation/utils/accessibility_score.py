@@ -47,18 +47,18 @@ def update_accessibility_scores():
         time.sleep(60*60)
 
 def calculate_accessibility_score(location, model, anchored_weather_data, Annotation):
-    annotation_data = location.annotations.all()
+    annotation = location.annotations.all()
+
+    if len(annotation) == 0:
+        return None
+
+    annotation_data = annotation.first().form_data
+    annotation_data = json.loads(annotation_data)
 
     if not annotation_data['sidewalkPresence']:
         return 0
 
-    if len(annotation_data) == 0:
-        return None
-
     location_data = location.data
-    
-    annotation_data = annotation_data.first()
-    annotation_data = json.loads(annotation_data)
 
     flood_hazard_index = Annotation.FLOOD_HAZARD[str(location_data['hazard'])]
 
