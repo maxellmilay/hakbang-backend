@@ -56,10 +56,10 @@ class AnnotationView(GenericView):
             weather_data = get_weather_data(latitude, longitude)
             anchored_weather_data[location.anchor] = weather_data
 
-            accessibility_score, results = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
 
-            location.accessibility_score = accessibility_score
-            location.results = results
+            location.accessibility_score = data['accessibility_score']
+            location.results = data['results']
 
             try:
                 location.full_clean()
