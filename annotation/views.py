@@ -45,30 +45,27 @@ class AnnotationView(GenericView):
 
             location = Location.objects.get(id=instance.location_id)
 
-            location.accessibility_score = 1
-            location.save()
+            with open('models/logistic_regression_model.pkl', 'rb') as file:
+                model = pickle.load(file)
 
-            # with open('models/logistic_regression_model.pkl', 'rb') as file:
-            #     model = pickle.load(file)
+            anchored_weather_data = {}
 
-            # anchored_weather_data = {}
+            coordinates = location.anchor.split(',')
+            longitude = float(coordinates[0])
+            latitude = float(coordinates[1])
+            weather_data = get_weather_data(latitude, longitude)
+            anchored_weather_data[location.anchor] = weather_data
 
-            # coordinates = location.anchor.split(',')
-            # longitude = float(coordinates[0])
-            # latitude = float(coordinates[1])
-            # weather_data = get_weather_data(latitude, longitude)
-            # anchored_weather_data[location.anchor] = weather_data
+            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
 
-            # data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            location.accessibility_score = data['accessibility_probability']
+            location.results = data['results']
 
-            # location.accessibility_score = data['accessibility_score']
-            # location.results = data['results']
-
-            # try:
-            #     location.full_clean()
-            #     location.save()
-            # except ValidationError as e:
-            #     print('ERROR: ',e)
+            try:
+                location.full_clean()
+                location.save()
+            except ValidationError as e:
+                print('ERROR: ',e)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -15,7 +15,7 @@ def update_accessibility_scores():
     from annotation.models import Annotation
 
     while True:
-        print("Calculating accessibility score...")
+        print("\nCalculating accessibility score...")
 
         with open('models/logistic_regression_model.pkl', 'rb') as file:
             model = pickle.load(file)
@@ -66,8 +66,11 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
 
     zoning_area_index = Annotation.ZONING_AREA[location_data['zone']]
 
-    border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']]
-    lighting_index = Annotation.LIGHTING_CONDITION[annotation_data['lightingCondition']]
+    print('BORDER BUFFER', annotation_data['borderBuffer']['value'])
+
+    border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']['value']]
+
+    lighting_index = Annotation.LIGHTING_CONDITION[annotation_data['lightingCondition']['value']]
 
     input = {
         'flood_risk': flood_hazard_index,
@@ -75,11 +78,11 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
         'precipitation': weather['precipitation'],
         'key_areas': sum(location_data['nearPlacesFrequency'].values()),
         'population': location_data['population']/1000,
-        'walkway_width': annotation_data['sidewalkWidth'],
+        'walkway_width': annotation_data['sidewalkWidth']['value'],
         'zone_area': zoning_area_index,
-        'gradient': annotation_data['rampGradient'],
-        'surface': annotation_data['sidewalkCondition'],
-        'street_furniture': annotation_data['streetFurniture'],
+        'gradient': annotation_data['rampGradient']['value'],
+        'surface': annotation_data['sidewalkCondition']['value'],
+        'street_furniture': annotation_data['streetFurniture']['value'],
         'border_buffer': border_buffer_index,
         'lighting': lighting_index
     }
