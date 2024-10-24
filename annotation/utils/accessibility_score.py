@@ -41,6 +41,7 @@ def update_accessibility_scores():
             try:
                 location.full_clean()
                 location.save()
+                print(f"Accessibility for Location {location.id} successfully calculated")
             except ValidationError as e:
                 print('ERROR: ',e)
 

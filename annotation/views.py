@@ -60,6 +60,8 @@ class AnnotationView(GenericView):
             annotation_data = request.data['form_data']
             annotation_data = json.loads(annotation_data)
 
+            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', annotation_data)
+
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
             location.accessibility_score = data['accessibility_probability']
