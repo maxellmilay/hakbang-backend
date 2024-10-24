@@ -44,7 +44,7 @@ def update_accessibility_scores():
             except ValidationError as e:
                 print('ERROR: ',e)
 
-        time.sleep(10)
+        time.sleep(60*60)
 
 def calculate_accessibility_score(location, model, anchored_weather_data, Annotation):
     annotation_data = location.annotations.all()
