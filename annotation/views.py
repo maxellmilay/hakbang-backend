@@ -45,27 +45,30 @@ class AnnotationView(GenericView):
 
             location = Location.objects.get(id=instance.location_id)
 
-            with open('models/logistic_regression_model.pkl', 'rb') as file:
-                model = pickle.load(file)
+            location.accessibility_score = 1
+            location.save()
 
-            anchored_weather_data = {}
+            # with open('models/logistic_regression_model.pkl', 'rb') as file:
+            #     model = pickle.load(file)
 
-            coordinates = location.anchor.split(',')
-            longitude = float(coordinates[0])
-            latitude = float(coordinates[1])
-            weather_data = get_weather_data(latitude, longitude)
-            anchored_weather_data[location.anchor] = weather_data
+            # anchored_weather_data = {}
 
-            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            # coordinates = location.anchor.split(',')
+            # longitude = float(coordinates[0])
+            # latitude = float(coordinates[1])
+            # weather_data = get_weather_data(latitude, longitude)
+            # anchored_weather_data[location.anchor] = weather_data
 
-            location.accessibility_score = data['accessibility_score']
-            location.results = data['results']
+            # data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
 
-            try:
-                location.full_clean()
-                location.save()
-            except ValidationError as e:
-                print('ERROR: ',e)
+            # location.accessibility_score = data['accessibility_score']
+            # location.results = data['results']
+
+            # try:
+            #     location.full_clean()
+            #     location.save()
+            # except ValidationError as e:
+            #     print('ERROR: ',e)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

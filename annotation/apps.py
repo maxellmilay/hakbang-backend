@@ -11,6 +11,7 @@ class AnnotationConfig(AppConfig):
     def ready(self):
         # Only run the thread in the main process, not in autoreload processes
         if os.environ.get('RUN_MAIN') and not self.thread_started:
-            self.thread_started = True
-            thread = threading.Thread(target=update_accessibility_scores, daemon=True)
-            thread.start()
+            pass
+            # self.thread_started = True
+            # thread = threading.Thread(target=update_accessibility_scores, daemon=True)
+            # thread.start()
