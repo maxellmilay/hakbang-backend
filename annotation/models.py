@@ -73,7 +73,7 @@ class Location(models.Model):
     accessibility_score = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     adjacent_street = models.CharField(max_length=255, blank=True, null=True)
     data = models.JSONField()
-    results = models.JSONField()
+    results = models.JSONField(blank=True, null=True)
     anchor = models.CharField(max_length=50, choices=ANCHOR_CHOICES, default=ANCHOR_C)
     start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
     end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')

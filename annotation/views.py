@@ -64,7 +64,13 @@ class AnnotationView(GenericView):
 
             data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
-            location.accessibility_score = data['accessibility_probability']
+            rounded_accessibility_score = round(data['accessibility_probability'],2)
+
+            print('NNNNNNNNNNNNNNNNNNNNNNNNNNNN', rounded_accessibility_score)
+
+            print('OOOOOOOOOOOOOOOOOOOOOOOOOOOO', data['results'])
+
+            location.accessibility_score = rounded_accessibility_score
             location.results = data['results']
 
             try:
