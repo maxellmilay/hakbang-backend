@@ -3,7 +3,7 @@ from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSeri
 from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 from annotation.utils.weather import get_weather_data
-from annotation.utils.accessibility_score import calculate_accessibility_score
+from annotation.utils.accessibility_score import calculate_accessibility_score, individual_update_accessibility_scores
 
 from django.db import transaction
 from rest_framework import status
@@ -46,31 +46,11 @@ class AnnotationView(GenericView):
             self.invalidate_list_cache()
 
             location = Location.objects.get(id=instance.location_id)
-
-            with open('models/logistic_regression_model.pkl', 'rb') as file:
-                model = pickle.load(file)
-
-            anchored_weather_data = {}
-
-            coordinates = location.anchor.split(',')
-            longitude = float(coordinates[0])
-            latitude = float(coordinates[1])
-            weather_data = get_weather_data(latitude, longitude)
-            anchored_weather_data[location.anchor] = weather_data
-
+            
             annotation_data = request.data['form_data']
             annotation_data = json.loads(annotation_data)
 
-            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
-
-            location.accessibility_score = data['accessibility_probability']
-            location.results = data['results']
-
-            try:
-                location.full_clean()
-                location.save()
-            except ValidationError as e:
-                print('ERROR: ',e)
+            individual_update_accessibility_scores(location, Annotation, annotation_data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -88,8 +68,11 @@ class AnnotationView(GenericView):
             self.invalidate_list_cache()
 
             location = Location.objects.get(id=instance.location_id)
-            # recalculate accessibility score
-            # update location accessibility score
+
+            annotation_data = request.data['form_data']
+            annotation_data = json.loads(annotation_data)
+
+            individual_update_accessibility_scores(location, Annotation, annotation_data)
             
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

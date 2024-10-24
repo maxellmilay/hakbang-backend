@@ -1,7 +1,6 @@
 import time
 import json
 import pickle
-import random
 import numpy as np
 from decimal import Decimal
 
@@ -52,37 +51,67 @@ def batch_update_accessibility_scores(locations, Annotation):
         except ValidationError as e:
             print('ERROR: ', e)
 
+def individual_update_accessibility_scores(location, Annotation, annotation_data):
+    with open('models/logistic_regression_model.pkl', 'rb') as file:
+        model = pickle.load(file)
+
+    anchored_weather_data = {}
+
+    coordinates = location.anchor.split(',')
+    longitude = float(coordinates[0])
+    latitude = float(coordinates[1])
+    weather_data = get_weather_data(latitude, longitude)
+    anchored_weather_data[location.anchor] = weather_data
+
+    data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
+
+    location.accessibility_score = data['accessibility_probability']
+    location.results = data['results']
+
+    try:
+        location.full_clean()
+        location.save()
+    except ValidationError as e:
+        print('ERROR: ',e)
+
 def calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data=None):
     if not annotation_data:
         annotation = location.annotations.all()
 
         if len(annotation) == 0:
-            return {'accessibility_probability': None, 'results': None}
+            return {
+                'accessibility_probability': None,
+                'results': None
+            }
 
         annotation_data = annotation.first().form_data
         annotation_data = json.loads(annotation_data)
 
     if not annotation_data['sidewalkPresence']:
-        return {'accessibility_probability': 0, 'results': None}
+        return {
+            'accessibility_probability': 0,
+            'results': None
+        }
 
     location_data = location.data
 
     flood_hazard_index = Annotation.FLOOD_HAZARD[str(location_data['hazard'])]
-
     weather = anchored_weather_data[location.anchor]
+
+    total_key_areas = sum(location_data['nearPlacesFrequency'].values())
+    simplified_population = location_data['population']/1000
 
     zoning_area_index = Annotation.ZONING_AREA[location_data['zone']]
 
     border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']['value']]
-
     lighting_index = Annotation.LIGHTING_CONDITION[annotation_data['lightingCondition']['value']]
 
     input = {
         'flood_risk': flood_hazard_index,
         'heat_index': weather['heat_index'],
         'precipitation': weather['precipitation'],
-        'key_areas': sum(location_data['nearPlacesFrequency'].values()),
-        'population': location_data['population']/1000,
+        'key_areas': total_key_areas,
+        'population': simplified_population,
         'walkway_width': annotation_data['sidewalkWidth']['value'],
         'zone_area': zoning_area_index,
         'gradient': annotation_data['rampGradient']['value'],
@@ -118,4 +147,7 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     accessibility_probability = probabilities[0][1]
     accessibility_probability = round(Decimal(accessibility_probability), 2)
 
-    return {'accessibility_probability':accessibility_probability, 'results':converted_results}
+    return {
+        'accessibility_probability':accessibility_probability,
+        'results':converted_results
+    }
