@@ -96,11 +96,11 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     raw_accessibility = fis.accessibility
 
     results = {
-        'crisp_weather_condition': crisp_weather_condition,
-        'crisp_urban_density': crisp_urban_density,
-        'crisp_sidewalk_capacity': crisp_sidewalk_capacity,
-        'crisp_safety_risk': crisp_safety_risk,
-        'raw_accessibility': raw_accessibility
+        "crisp_weather_condition": crisp_weather_condition,
+        "crisp_urban_density": crisp_urban_density,
+        "crisp_sidewalk_capacity": crisp_sidewalk_capacity,
+        "crisp_safety_risk": crisp_safety_risk,
+        "raw_accessibility": raw_accessibility
     }
 
     input_data = [[crisp_weather_condition,crisp_urban_density,crisp_sidewalk_capacity,crisp_safety_risk]]
