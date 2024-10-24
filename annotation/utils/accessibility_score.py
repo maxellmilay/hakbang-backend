@@ -11,42 +11,46 @@ from annotation.utils.weather import get_weather_data
 from annotation.utils.fis.fis import FuzzyInferenceSystem
 from annotation.utils.logreg.predict import get_probabilities
 
-def update_accessibility_scores():
+def scheduled_recalculate():
     from annotation.models import Location
     from annotation.models import Annotation
 
     while True:
         print("\nCalculating accessibility score...")
 
-        with open('models/logistic_regression_model.pkl', 'rb') as file:
-            model = pickle.load(file)
+        locations = Location.objects.filter(accessibility_score__isnull=False)
 
-        anchored_weather_data = {}
+        batch_update_accessibility_scores(locations, Annotation)
 
-        for coordinates_string, _ in Location.ANCHOR_CHOICES:
-            coordinates = coordinates_string.split(',')
-            longitude = float(coordinates[0])
-            latitude = float(coordinates[1])
-            weather_data = get_weather_data(latitude, longitude)
-            anchored_weather_data[coordinates_string] = weather_data
+        time.sleep(60*30)
 
-        # get static data from DB
-        locations = Location.objects.all()
+def batch_update_accessibility_scores(locations, Annotation):
+    from annotation.models import Location
 
-        for location in locations:
-            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+    with open('models/logistic_regression_model.pkl', 'rb') as file:
+        model = pickle.load(file)
 
-            location.accessibility_score = data['accessibility_probability']
-            location.results = data['results']
+    anchored_weather_data = {}
 
-            try:
-                location.full_clean()
-                location.save()
-                print(f"Accessibility for Location {location.id} successfully calculated")
-            except ValidationError as e:
-                print('ERROR: ',e)
+    for coordinates_string, _ in Location.ANCHOR_CHOICES:
+        coordinates = coordinates_string.split(',')
+        longitude = float(coordinates[0])
+        latitude = float(coordinates[1])
+        weather_data = get_weather_data(latitude, longitude)
+        anchored_weather_data[coordinates_string] = weather_data
 
-        time.sleep(60*60)
+    for location in locations:
+        data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+
+        location.accessibility_score = data['accessibility_probability']
+        location.results = data['results']
+
+        try:
+            location.full_clean()
+            location.save()
+            print(f"Accessibility for Location {location.id} successfully calculated")
+        except ValidationError as e:
+            print('ERROR: ', e)
 
 def calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data=None):
     if not annotation_data:
