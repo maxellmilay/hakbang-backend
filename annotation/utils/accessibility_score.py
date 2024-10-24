@@ -46,14 +46,15 @@ def update_accessibility_scores():
 
         time.sleep(60*60)
 
-def calculate_accessibility_score(location, model, anchored_weather_data, Annotation):
-    annotation = location.annotations.all()
+def calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data=None):
+    if not annotation_data:
+        annotation = location.annotations.all()
 
-    # if len(annotation) == 0:
-    #     return {'accessibility_probability': None, 'results': None}
+        if len(annotation) == 0:
+            return {'accessibility_probability': None, 'results': None}
 
-    annotation_data = annotation.first().form_data
-    annotation_data = json.loads(annotation_data)
+        annotation_data = annotation.first().form_data
+        annotation_data = json.loads(annotation_data)
 
     if not annotation_data['sidewalkPresence']:
         return {'accessibility_probability': 0, 'results': None}
@@ -65,8 +66,6 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     weather = anchored_weather_data[location.anchor]
 
     zoning_area_index = Annotation.ZONING_AREA[location_data['zone']]
-
-    print('BORDER BUFFER', annotation_data['borderBuffer']['value'])
 
     border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']['value']]
 

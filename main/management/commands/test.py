@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from annotation.models import Annotation, Location
 
 import pickle
+import json
 
 from annotation.utils.accessibility_score import calculate_accessibility_score
 from annotation.utils.weather import get_weather_data
@@ -26,7 +27,12 @@ class Command(BaseCommand):
             weather_data = get_weather_data(latitude, longitude)
             anchored_weather_data[location.anchor] = weather_data
 
-            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            annotation = location.annotations.all()
+
+            annotation_data = annotation.first().form_data
+            annotation_data = json.loads(annotation_data)
+
+            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
             print('ACCESSIBILITY: ',data['accessibility_probability'])
             print('ACCESSIBILITY: ',data['results'])

@@ -56,7 +56,9 @@ class AnnotationView(GenericView):
             weather_data = get_weather_data(latitude, longitude)
             anchored_weather_data[location.anchor] = weather_data
 
-            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+            annotation_data = request.data['form_data']
+
+            data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
 
             location.accessibility_score = data['accessibility_probability']
             location.results = data['results']
