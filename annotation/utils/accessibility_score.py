@@ -26,7 +26,7 @@ def scheduled_recalculate():
 def batch_update_accessibility_scores(locations, Annotation):
     from annotation.models import Location
 
-    with open('models/logistic_regression_model.pkl', 'rb') as file:
+    with open('models/nn_model.pkl', 'rb') as file:
         model = pickle.load(file)
 
     anchored_weather_data = {}
@@ -52,7 +52,7 @@ def batch_update_accessibility_scores(locations, Annotation):
             print('ERROR: ', e)
 
 def individual_update_accessibility_scores(location, Annotation, annotation_data):
-    with open('models/logistic_regression_model.pkl', 'rb') as file:
+    with open('models/nn_model.pkl', 'rb') as file:
         model = pickle.load(file)
 
     anchored_weather_data = {}

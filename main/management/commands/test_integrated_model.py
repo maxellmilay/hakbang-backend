@@ -16,7 +16,7 @@ class Command(BaseCommand):
         try:
             location = Location.objects.get(id=326)
 
-            with open('models/logistic_regression_model.pkl', 'rb') as file:
+            with open('models/nn_model.pkl', 'rb') as file:
                 model = pickle.load(file)
 
             anchored_weather_data = {}
