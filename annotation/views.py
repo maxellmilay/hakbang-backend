@@ -2,18 +2,14 @@ from .base_serializers import LocationSerializer, AnnotationFormSerializer, Anno
 from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer
 from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
-from annotation.utils.weather import get_weather_data
-from annotation.utils.accessibility_score import calculate_accessibility_score, individual_update_accessibility_scores
+from annotation.utils.accessibility_score import individual_update_accessibility_scores
 
 from django.db import transaction
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
 
-import pickle
 import json
-from decimal import Decimal
 
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False).order_by('accessibility_score')
