@@ -12,6 +12,6 @@ class AnnotationConfig(AppConfig):
         # Only run the thread in the main process, not in autoreload processes
         if os.environ.get('RUN_MAIN') and not self.thread_started:
             pass
-            # self.thread_started = True
-            # thread = threading.Thread(target=scheduled_recalculate, daemon=True)
-            # thread.start()
+            self.thread_started = True
+            thread = threading.Thread(target=scheduled_recalculate, daemon=True)
+            thread.start()
