@@ -73,6 +73,26 @@ class AnnotationView(GenericView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @transaction.atomic
+    def destroy(self, request, pk=None):
+        if 'delete' not in self.allowed_methods:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        instance = get_object_or_404(self.queryset, pk=pk)
+        self.delete_cache(pk)
+        self.invalidate_list_cache()
+
+        location = Location.objects.get(id=instance.location_id)
+        location.accessibility_score = None
+        location.save(update_fields=['accessibility_score'])
+
+        if hasattr(instance, 'removed'):
+            instance.removed = True
+            instance.save(update_fields=['removed'])
+        else:
+            instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SidebarAnnotationsView(GenericView):
     queryset = Annotation.objects.filter(removed=False).order_by('-updated_on')
