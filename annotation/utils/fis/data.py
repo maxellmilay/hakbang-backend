@@ -2,6 +2,8 @@ import numpy as np
 from annotation.utils.fis.fis import FuzzyInferenceSystem
 
 def generate_fis_data(n_samples):
+    print('Generating FIS Data...')
+
     # Generate random values for weather
     f = np.random.choice([0, 1, 2], n_samples)  # Discrete values for f (0, 1, 2)
     h = np.random.uniform(0, 60, n_samples)     # Continuous values for h (0-60)
@@ -55,5 +57,7 @@ def generate_fis_data(n_samples):
             'safety_risk': crisp_safety_risk,
             'accessibility': raw_accessibility
         })
+
+    print('FIS Data Generated!')
 
     return data

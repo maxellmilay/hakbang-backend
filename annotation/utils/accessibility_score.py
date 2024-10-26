@@ -8,7 +8,11 @@ from django.core.exceptions import ValidationError
 
 from annotation.utils.weather import get_weather_data
 from annotation.utils.fis.fis import FuzzyInferenceSystem
-from annotation.utils.logreg.predict import get_probabilities
+from annotation.utils.logreg.predict import get_logreg_probabilities
+from annotation.utils.neural_network.predict import predict
+
+NN = 'neural_network'
+LOGREG = 'logistic_regression'
 
 def scheduled_recalculate():
     from annotation.models import Location
@@ -19,14 +23,16 @@ def scheduled_recalculate():
 
         locations = Location.objects.filter(accessibility_score__isnull=False)
 
-        batch_update_accessibility_scores(locations, Annotation)
+        model_type = NN
+
+        batch_update_accessibility_scores(locations, Annotation, model_type)
 
         time.sleep(60*30)
 
-def batch_update_accessibility_scores(locations, Annotation):
+def batch_update_accessibility_scores(locations, Annotation, model_type):
     from annotation.models import Location
 
-    with open('models/nn_model.pkl', 'rb') as file:
+    with open('models/logistic_regression_model.pkl', 'rb') as file:
         model = pickle.load(file)
 
     anchored_weather_data = {}
@@ -39,7 +45,7 @@ def batch_update_accessibility_scores(locations, Annotation):
         anchored_weather_data[coordinates_string] = weather_data
 
     for location in locations:
-        data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation)
+        data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, model_type)
 
         location.accessibility_score = data['accessibility_probability']
         location.results = data['results']
@@ -51,8 +57,8 @@ def batch_update_accessibility_scores(locations, Annotation):
         except ValidationError as e:
             print('ERROR: ', e)
 
-def individual_update_accessibility_scores(location, Annotation, annotation_data):
-    with open('models/nn_model.pkl', 'rb') as file:
+def individual_update_accessibility_scores(location, Annotation, model_type, annotation_data):
+    with open('models/logistic_regression_model.pkl', 'rb') as file:
         model = pickle.load(file)
 
     anchored_weather_data = {}
@@ -63,7 +69,7 @@ def individual_update_accessibility_scores(location, Annotation, annotation_data
     weather_data = get_weather_data(latitude, longitude)
     anchored_weather_data[location.anchor] = weather_data
 
-    data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data)
+    data = calculate_accessibility_score(location, model, anchored_weather_data, Annotation, model_type, annotation_data)
 
     location.accessibility_score = data['accessibility_probability']
     location.results = data['results']
@@ -74,7 +80,7 @@ def individual_update_accessibility_scores(location, Annotation, annotation_data
     except ValidationError as e:
         print('ERROR: ',e)
 
-def calculate_accessibility_score(location, model, anchored_weather_data, Annotation, annotation_data=None):
+def calculate_accessibility_score(location, model, anchored_weather_data, Annotation, model_type, annotation_data=None):
     if not annotation_data:
         annotation = location.annotations.all()
 
@@ -140,14 +146,38 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
     converted_results = {k: (int(v) if isinstance(v, np.int64) else float(v) if isinstance(v, np.float64) else v) for k, v in results.items()}
     converted_results = json.dumps(converted_results)
 
-    input_data = [[crisp_weather_condition,crisp_urban_density,crisp_sidewalk_capacity,crisp_safety_risk]]
-
-    probabilities = get_probabilities(model,input_data)
-
-    accessibility_probability = probabilities[0][1]
-    accessibility_probability = round(Decimal(accessibility_probability), 2)
+    if model_type == NN:
+        accessibility_probability = get_accessibility_probability_from_nn(results)
+    elif model_type == LOGREG:
+        accessibility_probability = get_accessibility_probability_from_logreg(model, results)
+    else:
+        accessibility_probability = get_accessibility_probability_from_logreg(model, results)
 
     return {
         'accessibility_probability':accessibility_probability,
         'results':converted_results
     }
+
+def get_accessibility_probability_from_logreg(model, data):
+    input_data = [[data['crisp_weather_condition'], data['crisp_urban_density'], data['crisp_sidewalk_capacity'], data['crisp_safety_risk']]]
+
+    probabilities = get_logreg_probabilities(model,input_data)
+
+    accessibility_probability = probabilities[0][1]
+    accessibility_probability = round(Decimal(accessibility_probability), 2)
+
+    return accessibility_probability
+
+def get_accessibility_probability_from_nn(data):
+    input = {
+        "weather_condition": data['crisp_weather_condition'],
+        "urban_density": data['crisp_urban_density'],
+        "sidewalk_capacity": data['crisp_sidewalk_capacity'],
+        "safety_risk": data['crisp_safety_risk'],
+    }
+
+    data = [input]
+    accessibility_probability = predict(data)
+    accessibility_probability = round(Decimal(accessibility_probability), 2)
+
+    return accessibility_probability

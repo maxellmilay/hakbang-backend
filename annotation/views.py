@@ -11,6 +11,11 @@ from django.shortcuts import get_object_or_404
 
 import json
 
+NN = 'neural_network'
+LOGREG = 'logistic_regression'
+
+MODEL_TYPE = NN
+
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False).order_by('accessibility_score')
     serializer_class = LocationSerializer
@@ -46,7 +51,7 @@ class AnnotationView(GenericView):
             annotation_data = request.data['form_data']
             annotation_data = json.loads(annotation_data)
 
-            individual_update_accessibility_scores(location, Annotation, annotation_data)
+            individual_update_accessibility_scores(location, Annotation, MODEL_TYPE, annotation_data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -68,7 +73,7 @@ class AnnotationView(GenericView):
             annotation_data = request.data['form_data']
             annotation_data = json.loads(annotation_data)
 
-            individual_update_accessibility_scores(location, Annotation, annotation_data)
+            individual_update_accessibility_scores(location, Annotation, MODEL_TYPE, annotation_data)
             
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

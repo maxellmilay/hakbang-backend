@@ -30,14 +30,6 @@ def get_weather_data(lat, lng):
         heat_index_category = get_heat_index_category(heat_index)
         precipitation_category = get_precipitation_category(precipitation)
 
-        # Log results
-        print(f'Temperature: {T_celsius}°C')
-        print(f'Humidity: {humidity}%')
-        print(f'Heat Index: {heat_index:.2f}°C')
-        print(f'Heat Index Category: {heat_index_category}')
-        print(f'Precipitation: {precipitation} mm/hr')
-        print(f'Precipitation Category: {precipitation_category}')
-
         return {
             'temperature': T_celsius,
             'humidity': humidity,
