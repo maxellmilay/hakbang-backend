@@ -106,14 +106,26 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #     )
 # }
 
-# Google Cloud SQL
+# # Google Cloud SQL
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': os.getenv('GCP_DB_HOST'),
+#         'USER': os.getenv('GCP_DB_USER'),
+#         'PASSWORD': os.getenv('GCP_DB_PASSWORD'),
+#         'NAME': os.getenv('GCP_DB_NAME'),
+#     }
+# }
+
+# Local PostgreSQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.getenv('GCP_DB_HOST'),
-        'USER': os.getenv('GCP_DB_USER'),
-        'PASSWORD': os.getenv('GCP_DB_PASSWORD'),
-        'NAME': os.getenv('GCP_DB_NAME'),
+        'HOST': os.getenv('LOCAL_DB_HOST'),
+        'USER': os.getenv('LOCAL_DB_USER'),
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD'),
+        'NAME': os.getenv('LOCAL_DB_NAME'),
+        'PORT': os.getenv('LOCAL_DB_PORT'),
     }
 }
 

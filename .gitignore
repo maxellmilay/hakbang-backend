@@ -76,3 +76,6 @@ key_base64.txt
 
 # Others
 flood/
+
+# PG Pass
+.pgpass
