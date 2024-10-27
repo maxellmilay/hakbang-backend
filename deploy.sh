@@ -33,4 +33,7 @@ gcloud run deploy lakbai-backend \
   --image=$IMAGE_URI \
   --platform=managed \
   --region=us-central1 \
-  --allow-unauthenticated
+  --allow-unauthenticated \
+  --memory=2G \
+  --cpu=2
+  
