@@ -16,9 +16,5 @@ fi
 
 SQL_FILE_PATH="$1"
 
-./run_local_db.sh
-
-sleep 5
-
 PGPASSWORD="$DB_PASSWORD" psql -U $DB_USER -h $DB_HOST -p $DB_PORT -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || PGPASSWORD="$DB_PASSWORD" psql -U $DB_USER -h $DB_HOST -p $DB_PORT -c "CREATE DATABASE $DB_NAME;"
 PGPASSWORD="$DB_PASSWORD" psql -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME < $SQL_FILE_PATH

@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # DATABASES
 #  - uncomment each to switch databases
 
-# # SQLite
+# # SQLite 3
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -110,10 +110,10 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'HOST': os.getenv('GCP_DB_HOST'),
-#         'USER': os.getenv('GCP_DB_USER'),
-#         'PASSWORD': os.getenv('GCP_DB_PASSWORD'),
-#         'NAME': os.getenv('GCP_DB_NAME'),
+#         'HOST': os.getenv('REMOTE_DB_HOST'),
+#         'USER': os.getenv('REMOTE_DB_USER'),
+#         'PASSWORD': os.getenv('REMOTE_DB_PASSWORD'),
+#         'NAME': os.getenv('REMOTE_DB_NAME'),
 #     }
 # }
 
