@@ -12,6 +12,7 @@ ENV/
 env/
 env.bak/
 *.env
+.python-version
 
 # Django stuff:
 *.log
