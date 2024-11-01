@@ -121,11 +121,11 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.getenv('LOCAL_DB_HOST'),
-        'USER': os.getenv('LOCAL_DB_USER'),
-        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD'),
-        'NAME': os.getenv('LOCAL_DB_NAME'),
-        'PORT': os.getenv('LOCAL_DB_PORT'),
+        'HOST': os.getenv('LOCAL_DB_HOST') or 'localhost',
+        'USER': os.getenv('LOCAL_DB_USER') or 'bposeatsuser',
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD') or 'bposeatspassword',
+        'NAME': os.getenv('LOCAL_DB_NAME') or 'lakbai',
+        'PORT': os.getenv('LOCAL_DB_PORT') or '5432',
     }
 }
 
