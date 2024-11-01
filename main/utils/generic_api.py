@@ -91,12 +91,16 @@ class GenericView(viewsets.ViewSet):
     def create(self, request):
         if 'create' not in self.allowed_methods:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        self.pre_create(request)
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
             self.cache_object(serializer.data, instance.pk)
             self.invalidate_list_cache()
+
+            self.post_create(request, instance)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -106,11 +110,15 @@ class GenericView(viewsets.ViewSet):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         instance = get_object_or_404(self.queryset, pk=pk)
+        self.pre_update(request, instance)
+
         serializer = self.serializer_class(instance, data=request.data)
         if serializer.is_valid():
             serializer.save()
             self.cache_object(serializer.data, pk)
             self.invalidate_list_cache()
+
+            self.post_update(request, instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -122,12 +130,34 @@ class GenericView(viewsets.ViewSet):
         instance = get_object_or_404(self.queryset, pk=pk)
         self.delete_cache(pk)
         self.invalidate_list_cache()
+        self.pre_destroy(instance)
         if hasattr(instance, 'removed'):
             instance.removed = True
             instance.save(update_fields=['removed'])
         else:
             instance.delete()
+
+        self.post_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Middleware methods
+    def pre_create(self, request):
+        pass
+
+    def post_create(self, request, instance):
+        pass
+
+    def pre_update(self, request, instance):
+        pass
+
+    def post_update(self, request, instance):
+        pass
+
+    def pre_destroy(self, instance):
+        pass
+
+    def post_destroy(self, instance):
+        pass
 
     # Cache operations
     def delete_cache(self, pk):
