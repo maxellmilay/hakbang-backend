@@ -62,6 +62,9 @@ class AnnotationView(GenericView):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         instance = get_object_or_404(self.queryset, pk=pk)
+        location_id = request.data.get('location_id')
+        start_coordinates_id = Location.objects.get(id=location_id).start_coordinates_id
+        request.data['coordinates_id'] = start_coordinates_id
         serializer = self.serializer_class(instance, data=request.data)
         if serializer.is_valid():
             serializer.save()
