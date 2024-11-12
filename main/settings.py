@@ -117,6 +117,7 @@ DATABASES = {
     }
 }
 
+
 # Local PostgreSQL
 # DATABASES = {
 #     'default': {
