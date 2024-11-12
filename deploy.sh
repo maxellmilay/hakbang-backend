@@ -12,6 +12,8 @@ gcloud config set project lakbai-439310
 # Set default region for Cloud Run (optional)
 gcloud config set run/region us-central1
 
+gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
 # Variables
 PROJECT_ID="lakbai-439310"
 LOCATION="us-central1"
