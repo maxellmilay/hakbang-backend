@@ -2,8 +2,13 @@ import torch
 import pandas as pd
 import joblib
 
+import os
+from dotenv import load_dotenv
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+load_dotenv()
 
 def generate_nn_training_data(data):
     print('Preprocessing FIS Data into train and test sets...')
@@ -23,7 +28,7 @@ def generate_nn_training_data(data):
     X_test = scaler.transform(X_test)
 
     print('Exporting scaler...')
-    joblib.dump(scaler, 'models/nn_scaler.joblib')
+    joblib.dump(scaler, f'models/{os.getenv('REMOTE_DB_HOST')}')
 
     # Convert to PyTorch tensors
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)

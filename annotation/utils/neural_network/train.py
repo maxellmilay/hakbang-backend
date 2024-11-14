@@ -2,9 +2,14 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+import os
+from dotenv import load_dotenv
+
 from annotation.utils.neural_network.preprocessing import generate_nn_training_data
 from annotation.utils.neural_network.larger_nn import LargerNN
 from annotation.utils.fis.data import generate_fis_data
+
+load_dotenv()
 
 def train(n_samples=20000, learning_rate=0.01, num_epochs=300):
     print('TRAIN NEURAL NETWORK')
@@ -46,5 +51,5 @@ def train(n_samples=20000, learning_rate=0.01, num_epochs=300):
 
     print('Saving model...')
     # Save the model's state_dict to a .pth file
-    torch.save(model.state_dict(), 'models/nn_model.pth')
-    print("Model state_dict saved to 'models/nn_model.pth'")
+    torch.save(model.state_dict(), f'models/{os.getenv('LATEST_NN_MODEL_NAME')}')
+    print(f"Model state_dict saved to 'models/{os.getenv('LATEST_NN_MODEL_NAME')}'")

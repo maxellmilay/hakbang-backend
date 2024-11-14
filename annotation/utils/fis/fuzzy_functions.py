@@ -6,6 +6,7 @@ from annotation.utils.fis.rules.sidewalk_capacity import low_sidewalk_capacity, 
 from annotation.utils.fis.rules.safety_risk import low_safety_risk, moderate_safety_risk, high_safety_risk
 
 from annotation.utils.fis.rules.accessibility import accessible, not_accessible
+from annotation.utils.fis.utils import calculate_lighting_score
 
 def fuzzy_weather_condition(f, h, p, flood_hazard, heat, precipitation):
   return (bad_weather_condition(f, h, p, flood_hazard, heat, precipitation),
@@ -22,10 +23,12 @@ def fuzzy_sidewalk_capacity(w, z, walkway_width, zoning_area):
             moderate_sidewalk_capacity(w, z, walkway_width, zoning_area),
             high_sidewalk_capacity(w, z, walkway_width, zoning_area))
 
-def fuzzy_safety_risk(g, s, sf, l, bb, gradient, surface, street_furniture, lighting, border_buffer):
-  return (low_safety_risk(g, s, sf, l, bb, gradient, surface, street_furniture, lighting, border_buffer),
-          moderate_safety_risk(g, s, sf, l, bb, gradient, surface, street_furniture, lighting, border_buffer),
-          high_safety_risk(g, s, sf, l, bb, gradient, surface, street_furniture, lighting, border_buffer))
+def fuzzy_safety_risk(g, s, sf, l, bb, t, gradient, surface, street_furniture, lighting, border_buffer, time):
+  lighting_score = calculate_lighting_score(l, t, lighting, time)
+
+  return (low_safety_risk(g, s, sf, bb, gradient, surface, street_furniture, lighting_score, border_buffer),
+          moderate_safety_risk(g, s, sf, bb, gradient, surface, street_furniture, lighting_score, border_buffer),
+          high_safety_risk(g, s, sf, bb, gradient, surface, street_furniture, lighting_score, border_buffer))
 
 def classify(fuzzy_tup):
     arg_max_idx = np.argmax(fuzzy_tup)

@@ -21,7 +21,8 @@ class Command(BaseCommand):
                 'surface': 0.001,
                 'street_furniture': 1,
                 'border_buffer': 1,
-                'lighting': 3
+                'lighting': 3,
+                'time': 20
             }
 
             fis = FuzzyInferenceSystem(input)

@@ -7,8 +7,8 @@ def heat_membership():
 
     # Define Gaussian membership functions for the heat levels
     heat.normal = sigmoid(1, -1, 15)
-    heat.hazardous = gauss(c=25, b=0.05, c_m=1)
-    heat.caution = gauss(c=32, b=0.25, c_m=1)
+    heat.hazardous = gauss(c=25, b=0.01, c_m=1)
+    heat.caution = gauss(c=32, b=0.05, c_m=1)
     heat.danger = sigmoid(1, 1, 35)
 
     return heat

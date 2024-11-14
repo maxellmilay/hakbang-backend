@@ -1,5 +1,5 @@
 from fuzzylogic.classes import Domain
-from fuzzylogic.functions import gauss, sigmoid
+from fuzzylogic.functions import gauss, sigmoid, trapezoid
 
 def gradient_membership():
     gradient = Domain("gradient", 0, 12, res=0.1)
@@ -42,3 +42,11 @@ def lighting_membership():
     lighting.excellent = sigmoid(1, 7, 2.25)
 
     return lighting
+
+def time_membership():
+    time = Domain("time", 0, 13, res=0.1)
+
+    time.day = trapezoid(0, 1, 12, 13)  # 5 am = 0, 6 am = 1, 5 pm = 12, 6 pm = 13
+    time.night = trapezoid(0, 1, 12, 13)  # 5 pm = 0, 6 pm = 1, 5 am = 12, 6 am = 13
+
+    return time

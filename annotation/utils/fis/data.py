@@ -23,6 +23,7 @@ def generate_fis_data(n_samples):
     sf = np.random.uniform(0, 3, n_samples)
     bb = np.random.choice([0, 1], n_samples)
     l = np.random.choice([1, 2 ,3], n_samples)
+    t= np.random.uniform(0, 24, n_samples)
 
     data = []
 
@@ -39,7 +40,8 @@ def generate_fis_data(n_samples):
             'surface': s[i],
             'street_furniture': sf[i],
             'border_buffer': bb[i],
-            'lighting': l[i]
+            'lighting': l[i],
+            'time': t[i]
         }
 
         fis = FuzzyInferenceSystem(input)

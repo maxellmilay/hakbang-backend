@@ -3,7 +3,7 @@ import numpy as np
 from annotation.utils.fis.sets.weather_condition import heat_membership, precipitation_membership, flood_risk_membership
 from annotation.utils.fis.sets.urban_density import key_areas_membership, population_membership
 from annotation.utils.fis.sets.sidewalk_capacity import walkway_width_membership, zoning_area_membership
-from annotation.utils.fis.sets.safety_risk import gradient_membership, surface_membership, street_furniture_membership, border_buffer_membership, lighting_membership
+from annotation.utils.fis.sets.safety_risk import gradient_membership, surface_membership, street_furniture_membership, border_buffer_membership, lighting_membership, time_membership
 
 from annotation.utils.fis.fuzzy_functions import fuzzy_weather_condition, fuzzy_urban_density, fuzzy_sidewalk_capacity, fuzzy_safety_risk, fuzzy_accessibility, classify
 from annotation.utils.fis.fuzzy_logic import defuzzify
@@ -33,6 +33,7 @@ class FuzzyInferenceSystem():
         self.street_furniture = street_furniture_membership()
         self.border_buffer = border_buffer_membership()
         self.lighting = lighting_membership()
+        self.time = time_membership()
     
     def setup_fuzzy_inputs(self, inputs):
         # Generate random values for weather
@@ -54,13 +55,14 @@ class FuzzyInferenceSystem():
         self.sf = inputs['street_furniture']
         self.bb = inputs['border_buffer']
         self.l = inputs['lighting']
+        self.t = inputs['time']
 
     def generate_fuzz(self):
         # Generate fuzzy and defuzzified values for weather condition
         self.fuzz_weather_condition = fuzzy_weather_condition(self.f, self.h, self.p, self.flood_risk, self.heat, self.precipitation)
         self.fuzz_urban_density = fuzzy_urban_density(self.ka, self.pop, self.key_areas, self.population)
         self.fuzz_sidewalk_capacity = fuzzy_sidewalk_capacity(self.w, self.z, self.walkway_width, self.zoning_area)
-        self.fuzz_safety_risk = fuzzy_safety_risk(self.g, self.s, self.sf, self.l, self.bb, self.gradient, self.surface, self.street_furniture, self.lighting, self.border_buffer)
+        self.fuzz_safety_risk = fuzzy_safety_risk(self.g, self.s, self.sf, self.l, self.bb, self.t, self.gradient, self.surface, self.street_furniture, self.lighting, self.border_buffer, self.time)
 
     def calculate_fuzzy_values(self):
         # Calculate fuzzy values for each aspect

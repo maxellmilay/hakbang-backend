@@ -10,6 +10,7 @@ from annotation.utils.weather import get_weather_data
 from annotation.utils.fis.fis import FuzzyInferenceSystem
 from annotation.utils.logreg.predict import get_logreg_probabilities
 from annotation.utils.neural_network.predict import predict
+from annotation.utils.time import get_current_army_hour
 
 NN = 'neural_network'
 LOGREG = 'logistic_regression'
@@ -111,6 +112,8 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
 
     border_buffer_index = Annotation.BORDER_BUFFER[annotation_data['borderBuffer']['value']]
     lighting_index = Annotation.LIGHTING_CONDITION[annotation_data['lightingCondition']['value']]
+    
+    current_hour = get_current_army_hour()
 
     input = {
         'flood_risk': flood_hazard_index,
@@ -124,7 +127,8 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
         'surface': annotation_data['sidewalkCondition']['value'],
         'street_furniture': annotation_data['streetFurniture']['value'],
         'border_buffer': border_buffer_index,
-        'lighting': lighting_index
+        'lighting': lighting_index,
+        'time': current_hour
     }
     
     fis = FuzzyInferenceSystem(input)
