@@ -34,8 +34,8 @@ jobs:
           echo "REMOTE_DB_USER=${{ secrets.GCP_DB_USER }}" >> .env
           echo "REMOTE_DB_PASSWORD=${{ secrets.GCP_DB_PASSWORD }}" >> .env
           echo "REMOTE_DB_NAME=${{ secrets.GCP_DB_NAME }}" >> .env
-          echo "REMOTE_DB_NAME=${{ secrets.LATEST_NN_MODEL_NAME }}" >> .env
-          echo "REMOTE_DB_NAME=${{ secrets.LATEST_NN_SCALER_NAME }}" >> .env
+          echo "LATEST_NN_MODEL_NAME=${{ secrets.LATEST_NN_MODEL_NAME }}" >> .env
+          echo "LATEST_NN_SCALER_NAME=${{ secrets.LATEST_NN_SCALER_NAME }}" >> .env
 
       - name: Deploy to Google Cloud
         run: |
