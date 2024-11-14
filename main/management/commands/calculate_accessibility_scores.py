@@ -10,9 +10,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             locations = Location.objects.all()
+            
+            NN = 'neural_network'
+            
+            model_type = NN
 
-            batch_update_accessibility_scores(locations, Annotation)
+            batch_update_accessibility_scores(locations, Annotation, model_type)
 
-            self.stdout.write(self.style.SUCCESS(f'Successfully generated accessibility scores'))
+            self.stdout.write(self.style.SUCCESS('Successfully generated accessibility scores'))
         except ValidationError as e:
             self.stdout.write(self.style.ERROR(f'ValidationError: {e}'))
