@@ -17,7 +17,7 @@ LOGREG = 'logistic_regression'
 MODEL_TYPE = NN
 
 class LocationView(GenericView):
-    queryset = Location.objects.filter(removed=False).filter(accessibility_score__isnull=False).order_by('-accessibility_score')
+    queryset = Location.objects.filter(removed=False).order_by('-accessibility_score')
     serializer_class = LocationSerializer
     size_per_request = 50
 
