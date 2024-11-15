@@ -19,7 +19,7 @@ MODEL_TYPE = NN
 class LocationView(GenericView):
     queryset = Location.objects.filter(removed=False).order_by('-accessibility_score')
     serializer_class = LocationSerializer
-    size_per_request = 25
+    size_per_request = 600
 
 
 class AnnotationFormView(GenericView):
