@@ -15,14 +15,14 @@ def predict(input_data):
 
     # Initialize the model and load the state dictionary
     model = LargerNN()
-    model.load_state_dict(torch.load(f'models/{os.getenv('LATEST_NN_MODEL_NAME')}', weights_only=True))
+    model.load_state_dict(torch.load(f"models/{os.getenv('LATEST_NN_MODEL_NAME')}", weights_only=True))
     model.eval()  # Set to evaluation mode
 
     # Prepare the features for prediction
     X_sample = df[['weather_condition', 'urban_density', 'sidewalk_capacity', 'safety_risk']].values
 
     # Import scaler
-    scaler = joblib.load(f'models/{os.getenv('LATEST_NN_SCALER_NAME')}')
+    scaler = joblib.load(f"models/{os.getenv('LATEST_NN_SCALER_NAME')}")
     X_sample = scaler.transform(X_sample)
 
     # Convert to PyTorch tensor
