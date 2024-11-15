@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
+import json
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.db.models import Q
@@ -195,10 +196,10 @@ class GenericView(viewsets.ViewSet):
 
         for key, value in request.query_params.items():
             if key.startswith('exclude__'):
-                parsed_value = parse_list_parameter(value) if ',' in value else value.strip()
+                parsed_value = parse_list_parameter(value) if ',' in value else json.loads(value.strip())
                 excludes[key[8:]] = parsed_value
             else:
-                parsed_value = parse_list_parameter(value) if ',' in value else value.strip()
+                parsed_value = parse_list_parameter(value) if ',' in value else json.loads(value.strip())
                 if parsed_value is not None and (key in self.allowed_filter_fields or '*' in self.allowed_filter_fields):
                     filters[key] = parsed_value
 
