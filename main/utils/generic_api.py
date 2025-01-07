@@ -3,12 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
-import json
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.db import transaction
+
+import json
+
 
 class GenericView(viewsets.ViewSet):
     """
@@ -60,8 +62,8 @@ class GenericView(viewsets.ViewSet):
         
         try:
             filters, excludes = self.parse_query_params(request)
-            top, bottom = self.get_pagination_params(filters)
-        
+            top, bottom, order_by = self.get_pagination_params(filters)
+            
             cached_data = None    
             if self.cache_key_prefix:
                 cache_key = self.get_list_cache_key(filters, excludes, top, bottom)
@@ -69,7 +71,7 @@ class GenericView(viewsets.ViewSet):
             if cached_data:
                 return Response(cached_data, status=status.HTTP_200_OK)
             
-            return self.filter(request, filters, excludes, top, bottom)
+            return self.filter(request, filters, excludes, top, bottom, order_by)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -194,13 +196,21 @@ class GenericView(viewsets.ViewSet):
             values = [v.strip() for v in value.rstrip(',').split(',') if v.strip()]
             return values if len(values) > 1 else values[0] if values else None
 
+        def parse_value(value):
+            if ',' in value:
+                return parse_list_parameter(value)
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return value  # Return as plain string if not valid JSON
+
         for key, value in request.query_params.items():
             if key.startswith('exclude__'):
-                parsed_value = parse_list_parameter(value) if ',' in value else json.loads(value.strip())
+                parsed_value = parse_value(value)
                 excludes[key[8:]] = parsed_value
             else:
-                parsed_value = parse_list_parameter(value) if ',' in value else json.loads(value.strip())
-                if parsed_value is not None and (key in self.allowed_filter_fields or '*' in self.allowed_filter_fields):
+                if key in self.allowed_filter_fields or '*' in self.allowed_filter_fields:
+                    parsed_value = parse_value(value)
                     filters[key] = parsed_value
 
         return filters, excludes
@@ -208,6 +218,8 @@ class GenericView(viewsets.ViewSet):
     def get_pagination_params(self, filters):
         page = filters.pop('page', None)
         top = int(filters.pop('top', 0))
+        order_by = filters.pop('order_by', None)
+
         if page is not None:
             top = (int(page) - 1) * self.size_per_request
         bottom = filters.pop('bottom', None)
@@ -215,15 +227,18 @@ class GenericView(viewsets.ViewSet):
             bottom = int(bottom)
         else:
             bottom = top + self.size_per_request
-        return top, bottom
+        return top, bottom, order_by
 
     def filter_queryset(self, filters, excludes):
         filter_q = Q(**filters)
         exclude_q = Q(**excludes)
         return self.queryset.filter(filter_q).exclude(exclude_q)
 
-    def filter(self, request, filters, excludes, top, bottom):
+    def filter(self, request, filters, excludes, top, bottom, order_by=None):
         queryset = self.filter_queryset(filters, excludes)
+        
+        if order_by:
+            queryset = queryset.order_by(order_by)
         
         paginator = Paginator(queryset, self.size_per_request)
         page_number = (top // self.size_per_request) + 1
