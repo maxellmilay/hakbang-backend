@@ -117,8 +117,6 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
 
     input = {
         'flood_risk': flood_hazard_index,
-        'heat_index': weather['heat_index'],
-        'precipitation': weather['precipitation'],
         'key_areas': total_key_areas,
         'population': simplified_population,
         'walkway_width': annotation_data['sidewalkWidth']['value'],
@@ -130,7 +128,10 @@ def calculate_accessibility_score(location, model, anchored_weather_data, Annota
         'lighting': lighting_index,
         'time': current_hour
     }
-    
+
+    if weather:
+        input['heat_index'] = weather['heat_index']
+        input['precipitation'] = weather['precipitation']
     fis = FuzzyInferenceSystem(input)
 
     crisp_weather_condition = fis.crisp_weather_condition

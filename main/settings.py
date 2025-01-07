@@ -106,29 +106,16 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #     )
 # }
 
-# Google Cloud SQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.getenv('REMOTE_DB_HOST'),
-        'USER': os.getenv('REMOTE_DB_USER'),
-        'PASSWORD': os.getenv('REMOTE_DB_PASSWORD'),
-        'NAME': os.getenv('REMOTE_DB_NAME'),
+        'HOST': os.getenv('LOCAL_DB_HOST') or 'localhost',
+        'USER': os.getenv('LOCAL_DB_USER') or 'bposeatsuser',
+        'PASSWORD': os.getenv('LOCAL_DB_PASSWORD') or 'bposeatspassword',
+        'NAME': os.getenv('LOCAL_DB_NAME') or 'lakbai',
+        'PORT': os.getenv('LOCAL_DB_PORT') or '5432',
     }
 }
-
-
-# Local PostgreSQL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'HOST': os.getenv('LOCAL_DB_HOST') or 'localhost',
-#         'USER': os.getenv('LOCAL_DB_USER') or 'bposeatsuser',
-#         'PASSWORD': os.getenv('LOCAL_DB_PASSWORD') or 'bposeatspassword',
-#         'NAME': os.getenv('LOCAL_DB_NAME') or 'lakbai',
-#         'PORT': os.getenv('LOCAL_DB_PORT') or '5432',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
