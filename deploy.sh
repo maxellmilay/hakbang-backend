@@ -25,7 +25,7 @@ IMAGE_NAME=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
 IMAGE_URI=$IMAGE_NAME:$TAG
 
 # Build Docker image
-docker build -t $IMAGE_URI .
+docker build --platform linux/amd64 -t $IMAGE_URI .
 
 # Push the Docker image to Google Artifact Registry
 docker push $IMAGE_URI

@@ -28,7 +28,8 @@ def generate_nn_training_data(data):
     X_test = scaler.transform(X_test)
 
     print('Exporting scaler...')
-    joblib.dump(scaler, f'models/{os.getenv('REMOTE_DB_HOST')}')
+    joblib.dump(scaler, f'models/{os.getenv('LATEST_NN_SCALER_NAME')}')
+    
 
     # Convert to PyTorch tensors
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
