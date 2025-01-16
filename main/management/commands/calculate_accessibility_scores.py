@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 
-from annotation.models import Annotation, Location
+from annotation.models import Annotation, Sidewalk
 from annotation.utils.accessibility_score import batch_update_accessibility_scores
 
 class Command(BaseCommand):
@@ -9,13 +9,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            locations = Location.objects.all()
+            sidewalks = Sidewalk.objects.all()
             
             NN = 'neural_network'
             
             model_type = NN
 
-            batch_update_accessibility_scores(locations, Annotation, model_type)
+            batch_update_accessibility_scores(sidewalks, Annotation, model_type)
 
             self.stdout.write(self.style.SUCCESS('Successfully generated accessibility scores'))
         except ValidationError as e:

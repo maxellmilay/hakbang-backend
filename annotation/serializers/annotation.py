@@ -1,4 +1,4 @@
-from annotation.base_serializers.annotation import AnnotationBaseSerializer, LocationSerializer
+from annotation.base_serializers.annotation import AnnotationBaseSerializer, SidewalkSerializer
 from accounts.serializers import UserSerializer
 
 
@@ -10,9 +10,9 @@ class AnnotationSerializer(AnnotationBaseSerializer):
         fields = '__all__'
 
 
-class SimpleLocationSerializer(LocationSerializer):
+class SimpleLocationSerializer(SidewalkSerializer):
     class Meta:
-        model = LocationSerializer.Meta.model
+        model = SidewalkSerializer.Meta.model
         fields = ['accessibility_score', 'start_coordinates', 'end_coordinates', 'id']
 
 

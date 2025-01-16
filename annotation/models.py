@@ -41,14 +41,16 @@ class Coordinates(models.Model):
         return f"({self.latitude}, {self.longitude})"
 
 
-class Location(models.Model):
+class Sidewalk(models.Model):
     """
-    Represents a location with flexible data structure.
+    Represents a sidewalk segment with flexible data and results structure.
 
     Attributes:
-        accessibility_score (DecimalField): The accessibility score of the location
+        accessibility_score (DecimalField): The accessibility score of the sidewalk
         adjacent_street (CharField): The name of the adjacent street.
         data (JSONField): Stores location data in JSON format.
+        results (JSONField): Stores results data in JSON format.
+        anchor (CharField); The nearest anchor location of the sidewalk
         start_coordinates (ForeignKey): The starting coordinates of the location.
         end_coordinates (ForeignKey): The ending coordinates of the location.
         removed (BooleanField): Indicates if the location has been marked as removed.
@@ -75,8 +77,8 @@ class Location(models.Model):
     data = models.JSONField()
     results = models.JSONField(blank=True, null=True)
     anchor = models.CharField(max_length=50, choices=ANCHOR_CHOICES, default=ANCHOR_C)
-    start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_location')
-    end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_location')
+    start_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='start_sidewalk')
+    end_coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='end_sidewalk')
     removed = models.BooleanField(default=False)
 
     class Meta:
@@ -99,14 +101,14 @@ class AnnotationForm(models.Model):
 
     Attributes:
         name (CharField): The name of the form.
-        data (JSONField): Stores form template data in JSON format.
+        template (JSONField): Stores form template data in JSON format.
         created_on (DateTimeField): The date and time when the form was created (auto-set).
         updated_on (DateTimeField): The date and time when the form was last updated (auto-set).
         removed (BooleanField): Indicates if the form has been marked as removed.
     """
 
     name = models.CharField(max_length=255)
-    form_data = models.JSONField()
+    template = models.JSONField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     removed = models.BooleanField(default=False)
@@ -123,13 +125,13 @@ class Annotation(models.Model):
     Represents an annotation made by a user.
 
     Attributes:
-        location (ForeignKey): The location associated with this annotation.
+        sidewalk (ForeignKey): The sidewalk associated with this annotation.
         name (CharField): The name of the annotation.
         created_on (DateTimeField): The date and time when the annotation was created (auto-set).
         updated_on (DateTimeField): The date and time when the annotation was last updated (auto-set).
         annotator (ForeignKey): The user who created the annotation.
-        form_data (JSONField): The data of the annotation in JSON format.
-        form_template (ForeignKey): The template used for this annotation, if any.
+        data (JSONField): The data of the annotation in JSON format.
+        template (ForeignKey): The template used for this annotation, if any.
         removed (BooleanField): Indicates if the annotation has been marked as removed.
     """
     User = get_user_model()
@@ -158,14 +160,14 @@ class Annotation(models.Model):
         'Industrial': 3
     }
 
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='annotations')
+    sidewalk = models.ForeignKey(Sidewalk, on_delete=models.CASCADE, related_name='annotations')
     name = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    annotator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_annotations')
-    form_data = models.JSONField()
-    form_template = models.ForeignKey(AnnotationForm, on_delete=models.SET_NULL, related_name='form_annotations', null=True, blank=True)
-    coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='coordinates_annotations')
+    annotator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='annotations')
+    data = models.JSONField()
+    template = models.ForeignKey(AnnotationForm, on_delete=models.SET_NULL, related_name='annotations', null=True, blank=True)
+    coordinates = models.ForeignKey(Coordinates, on_delete=models.CASCADE, related_name='annotations')
     removed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -188,8 +190,8 @@ class AnnotationImage(models.Model):
         annotation (ForeignKey): The annotation this image is associated with.
     """
     
-    file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='image_annotations')
-    annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE, related_name='images')
+    file = models.ForeignKey(File, on_delete=models.CASCADE, related_name='annotation_image')
+    annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE, related_name='annotation_images')
 
     def __str__(self):
         return self.file.url

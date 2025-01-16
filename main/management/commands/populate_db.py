@@ -5,7 +5,7 @@ import json
 import os
 import random
 
-from annotation.models import Coordinates, Location, AnnotationForm
+from annotation.models import Coordinates, Sidewalk, AnnotationForm
 
 class Command(BaseCommand):
     help = 'Populate the database with GeoJSON data from a .json file'
@@ -57,15 +57,15 @@ class Command(BaseCommand):
                 defaults={'removed': False}
             )
 
-            # Check if the Location already exists
-            location_exists = Location.objects.filter(
+            # Check if the Sidewalk already exists
+            sidewalk_exists = Sidewalk.objects.filter(
                 start_coordinates=start_coordinates,
                 end_coordinates=end_coordinates
             ).exists()
 
-            if not location_exists:
-                # Create Location object
-                location = Location(
+            if not sidewalk_exists:
+                # Create Sidewalk object
+                sidewalk = Sidewalk(
                     accessibility_score=None,  # Set as needed
                     adjacent_street=properties.get('nearestStreet'),
                     data=properties,
@@ -74,28 +74,29 @@ class Command(BaseCommand):
                 )
 
                 try:
-                    location.full_clean()
-                    location.save()
-                    self.stdout.write(self.style.SUCCESS(f'Successfully saved location with id {location.id}'))
+                    sidewalk.full_clean()
+                    sidewalk.save()
+                    self.stdout.write(self.style.SUCCESS(f'Successfully saved sidewalk with id {sidewalk.id}'))
                 except ValidationError as e:
                     self.stdout.write(self.style.ERROR(f'ValidationError: {e}'))
             else:
                 self.stdout.write(
                     self.style.WARNING(
-                        f'Location from {start_coordinates} to {end_coordinates} already exists. Skipping.'
+                        f'Sidewalk from {start_coordinates} to {end_coordinates} already exists. Skipping.'
                     )
                 )
         
         # Create admin user
         User = get_user_model()
         x = User.objects.create_superuser('admin', '', '123')
+        x.username = "Mandaue Admin"
         x.first_name = "Mandaue"
-        x.last_name = "Annotator"
+        x.last_name = "Admin"
         x.save()
 
         # Create initial form template
         name = random.choice(["Form A", "Form B", "Form C", "Form D"])
-        form_data = {
+        template = {
             "fields": [
                 {"field_name": "Field1", "field_type": random.choice(["text", "number", "checkbox"])},
                 {"field_name": "Field2", "field_type": random.choice(["text", "number", "checkbox"])},
@@ -106,6 +107,6 @@ class Command(BaseCommand):
 
         AnnotationForm.objects.create(
             name=name,
-            form_data=form_data,
+            template=template,
             removed=removed
         )

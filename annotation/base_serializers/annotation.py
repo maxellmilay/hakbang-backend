@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from annotation.models import Location, AnnotationForm, Annotation, AnnotationImage, Coordinates
+from annotation.models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, Coordinates
 from .file import FileSerializer
 
 
@@ -9,14 +9,14 @@ class CoordinatesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LocationSerializer(serializers.ModelSerializer):
+class SidewalkSerializer(serializers.ModelSerializer):
     start_coordinates = CoordinatesSerializer(read_only=True)
     end_coordinates = CoordinatesSerializer(read_only=True)
     start_coordinates_id = serializers.IntegerField(write_only=True)
     end_coordinates_id = serializers.IntegerField(write_only=True)
 
     class Meta:
-        model = Location
+        model = Sidewalk
         fields = '__all__'
 
 
@@ -39,13 +39,13 @@ class AnnotationImageSerializer(serializers.ModelSerializer):
 
 
 class AnnotationBaseSerializer(serializers.ModelSerializer):
-    location = LocationSerializer(read_only=True)
-    location_id = serializers.IntegerField(write_only=True)
+    sidewalk = SidewalkSerializer(read_only=True)
+    sidewalk_id = serializers.IntegerField(write_only=True)
     created_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     updated_on = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     annotator_id = serializers.IntegerField(write_only=True)
-    form_template = AnnotationFormSerializer(read_only=True)
-    form_template_id = serializers.IntegerField(write_only=True)
+    template = AnnotationFormSerializer(read_only=True)
+    template_id = serializers.IntegerField(write_only=True)
     coordinates = CoordinatesSerializer(read_only=True)
     coordinates_id = serializers.IntegerField(write_only=True)
     images = AnnotationImageSerializer(many=True, read_only=True)

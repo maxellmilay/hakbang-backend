@@ -1,6 +1,6 @@
-from .base_serializers import LocationSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
+from .base_serializers import SidewalkSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
 from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer
-from .models import Location, AnnotationForm, Annotation, AnnotationImage, File
+from .models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 from annotation.utils.accessibility_score import individual_update_accessibility_scores
 
@@ -16,9 +16,9 @@ LOGREG = 'logistic_regression'
 
 MODEL_TYPE = NN
 
-class LocationView(GenericView):
-    queryset = Location.objects.filter(removed=False).order_by('-accessibility_score')
-    serializer_class = LocationSerializer
+class SidewalkView(GenericView):
+    queryset = Sidewalk.objects.filter(removed=False).order_by('-accessibility_score')
+    serializer_class = SidewalkSerializer
     size_per_request = 600
 
 
@@ -36,8 +36,8 @@ class AnnotationView(GenericView):
         if 'create' not in self.allowed_methods:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
-        location_id = request.data.get('location_id')
-        start_coordinates_id = Location.objects.get(id=location_id).start_coordinates_id
+        sidewalk_id = request.data.get('sidewalk_id')
+        start_coordinates_id = Sidewalk.objects.get(id=sidewalk_id).start_coordinates_id
         request.data['coordinates_id'] = start_coordinates_id
 
         serializer = self.serializer_class(data=request.data)
@@ -46,12 +46,12 @@ class AnnotationView(GenericView):
             self.cache_object(serializer.data, instance.pk)
             self.invalidate_list_cache()
 
-            location = Location.objects.get(id=instance.location_id)
+            sidewalk = Sidewalk.objects.get(id=instance.sidewalk_id)
             
-            annotation_data = request.data['form_data']
+            annotation_data = request.data['data']
             annotation_data = json.loads(annotation_data)
 
-            individual_update_accessibility_scores(location, Annotation, MODEL_TYPE, annotation_data)
+            individual_update_accessibility_scores(sidewalk, Annotation, MODEL_TYPE, annotation_data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -62,8 +62,8 @@ class AnnotationView(GenericView):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         instance = get_object_or_404(self.queryset, pk=pk)
-        location_id = request.data.get('location_id')
-        start_coordinates_id = Location.objects.get(id=location_id).start_coordinates_id
+        sidewalk_id = request.data.get('sidewalk_id')
+        start_coordinates_id = Sidewalk.objects.get(id=sidewalk_id).start_coordinates_id
         request.data['coordinates_id'] = start_coordinates_id
         serializer = self.serializer_class(instance, data=request.data)
         if serializer.is_valid():
@@ -71,12 +71,12 @@ class AnnotationView(GenericView):
             self.cache_object(serializer.data, pk)
             self.invalidate_list_cache()
 
-            location = Location.objects.get(id=instance.location_id)
+            sidewalk = Sidewalk.objects.get(id=instance.sidewalk_id)
 
-            annotation_data = request.data['form_data']
+            annotation_data = request.data['data']
             annotation_data = json.loads(annotation_data)
 
-            individual_update_accessibility_scores(location, Annotation, MODEL_TYPE, annotation_data)
+            individual_update_accessibility_scores(sidewalk, Annotation, MODEL_TYPE, annotation_data)
             
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -90,9 +90,9 @@ class AnnotationView(GenericView):
         self.delete_cache(pk)
         self.invalidate_list_cache()
 
-        location = Location.objects.get(id=instance.location_id)
-        location.accessibility_score = None
-        location.save(update_fields=['accessibility_score'])
+        sidewalk = Sidewalk.objects.get(id=instance.sidewalk_id)
+        sidewalk.accessibility_score = None
+        sidewalk.save(update_fields=['accessibility_score'])
 
         if hasattr(instance, 'removed'):
             instance.removed = True

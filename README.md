@@ -111,7 +111,7 @@ python3 manage.py migrate
 
 ### PostgresSQL
 
-You have the option to either start fresh with an empty database or import our existing data, but before everything, make sure that your Docker Enginer is running.
+You have the option to either start fresh with an empty database or import our existing data, but before everything, make sure that your Docker Engine is running.
 
 ```
 sudo systemctl start docker

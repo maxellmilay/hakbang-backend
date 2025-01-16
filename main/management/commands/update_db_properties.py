@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 import json
 import os
 
-from annotation.models import Coordinates, Location
+from annotation.models import Coordinates, Sidewalk
 
 class Command(BaseCommand):
     help = 'Populate the database with GeoJSON data from a .json file'
@@ -55,25 +55,25 @@ class Command(BaseCommand):
                 removed=False
             )
 
-            # Get Location
-            location = Location.objects.get(
+            # Get Sidewalk
+            sidewalk = Sidewalk.objects.get(
                 start_coordinates=start_coordinates,
                 end_coordinates=end_coordinates
             )
 
-            if location:
+            if sidewalk:
 
-                location.data = properties
+                sidewalk.data = properties
 
                 try:
-                    location.full_clean()
-                    location.save()
-                    self.stdout.write(self.style.SUCCESS(f'Successfully updated location with id {location.id}'))
+                    sidewalk.full_clean()
+                    sidewalk.save()
+                    self.stdout.write(self.style.SUCCESS(f'Successfully updated sidewalk with id {sidewalk.id}'))
                 except ValidationError as e:
                     self.stdout.write(self.style.ERROR(f'ValidationError: {e}'))
             else:
                 self.stdout.write(
                     self.style.WARNING(
-                        f'Location from {start_coordinates} to {end_coordinates} already exists. Skipping.'
+                        f'Sidewalk from {start_coordinates} to {end_coordinates} already exists. Skipping.'
                     )
                 )

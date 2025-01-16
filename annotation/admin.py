@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import File, Coordinates, Location, AnnotationForm, Annotation, AnnotationImage
+from .models import File, Coordinates, Sidewalk, AnnotationForm, Annotation, AnnotationImage
 
 class AnnotationImageInline(admin.TabularInline):
     model = AnnotationImage
@@ -9,7 +9,7 @@ class AnnotationImageInline(admin.TabularInline):
 class AnnotationInline(admin.StackedInline):
     model = Annotation
     extra = 0
-    raw_id_fields = ('annotator', 'form_template', 'coordinates')
+    raw_id_fields = ('annotator', 'template', 'coordinates')
 
 @admin.register(File)
 class FileAdmin(admin.ModelAdmin):
@@ -24,8 +24,8 @@ class CoordinatesAdmin(admin.ModelAdmin):
     list_filter = ('removed',)
     search_fields = ('latitude', 'longitude')
 
-@admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
+@admin.register(Sidewalk)
+class SidewalkAdmin(admin.ModelAdmin):
     list_display = ('get_name', 'accessibility_score', 'adjacent_street', 'removed')
     list_filter = ('removed', 'accessibility_score')
     search_fields = ('adjacent_street', 'data')
@@ -45,10 +45,10 @@ class AnnotationFormAdmin(admin.ModelAdmin):
 
 @admin.register(Annotation)
 class AnnotationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'annotator', 'created_on', 'updated_on', 'removed')
+    list_display = ('name', 'sidewalk', 'annotator', 'created_on', 'updated_on', 'removed')
     list_filter = ('removed', 'created_on', 'updated_on')
-    search_fields = ('name', 'annotator__username', 'location__adjacent_street')
-    raw_id_fields = ('location', 'annotator', 'form_template', 'coordinates')
+    search_fields = ('name', 'annotator__username', 'sidewalk__adjacent_street')
+    raw_id_fields = ('sidewalk', 'annotator', 'template', 'coordinates')
     date_hierarchy = 'updated_on'
     inlines = [AnnotationImageInline]
 

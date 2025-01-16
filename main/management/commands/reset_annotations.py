@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 
-from annotation.models import Annotation, Location
+from annotation.models import Annotation, Sidewalk
 
 class Command(BaseCommand):
     help = 'Reset Annotations'
@@ -9,11 +9,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             Annotation.objects.all().delete()
-            locations = Location.objects.filter(accessibility_score__isnull=False)
-            for location in locations:
-                location.accessibility_score = None
-                location.full_clean()
-                location.save()
+            sidewalks = Sidewalk.objects.filter(accessibility_score__isnull=False)
+            for sidewalk in sidewalks:
+                sidewalk.accessibility_score = None
+                sidewalk.full_clean()
+                sidewalk.save()
 
             self.stdout.write(self.style.SUCCESS(f'Successfully deleted all annotations'))
         except ValidationError as e:
