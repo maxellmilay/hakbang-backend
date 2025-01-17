@@ -1,5 +1,5 @@
 from .base_serializers import SidewalkSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
-from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer
+from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer, SimpleSidewalkSerializer
 from .models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, File
 from main.utils.generic_api import GenericView
 from annotation.utils.accessibility_score import individual_update_accessibility_scores
@@ -20,7 +20,9 @@ class SidewalkView(GenericView):
     queryset = Sidewalk.objects.filter(removed=False).order_by('-accessibility_score')
     serializer_class = SidewalkSerializer
     size_per_request = 600
-
+    
+class SimpleSidewalkView(SidewalkView):
+    serializer_class = SimpleSidewalkSerializer
 
 class AnnotationFormView(GenericView):
     queryset = AnnotationForm.objects.filter(removed=False)

@@ -10,14 +10,14 @@ class AnnotationSerializer(AnnotationBaseSerializer):
         fields = '__all__'
 
 
-class SimpleLocationSerializer(SidewalkSerializer):
+class SimpleSidewalkSerializer(SidewalkSerializer):
     class Meta:
         model = SidewalkSerializer.Meta.model
         fields = ['accessibility_score', 'start_coordinates', 'end_coordinates', 'id']
 
 
 class SidebarAnnotationsSerializer(AnnotationSerializer):
-    location = SimpleLocationSerializer(read_only=True)
+    location = SimpleSidewalkSerializer(read_only=True)
     class Meta:
         model = AnnotationSerializer.Meta.model
         fields = ['id', 'updated_on', 'location', 'name']
