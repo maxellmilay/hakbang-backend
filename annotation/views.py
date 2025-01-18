@@ -1,10 +1,11 @@
 from .base_serializers import SidewalkSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
 from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer, SimpleSidewalkSerializer
-from .models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, File
+from .models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, File, Coordinates
 from main.utils.generic_api import GenericView
 from annotation.utils.accessibility_score import individual_update_accessibility_scores
 
 from django.db import transaction
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -20,6 +21,58 @@ class SidewalkView(GenericView):
     queryset = Sidewalk.objects.filter(removed=False).order_by('-accessibility_score')
     serializer_class = SidewalkSerializer
     size_per_request = 600
+    
+    @transaction.atomic
+    def create(self, request):
+        if 'create' not in self.allowed_methods:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        start_coord = request.data.get('start_coordinates')
+        end_coord = request.data.get('end_coordinates')
+        
+        # Extract latitude and longitude as strings
+        start_longitude = start_coord[0]
+        start_latitude = start_coord[1]
+        end_longitude = end_coord[0]
+        end_latitude = end_coord[1]
+        
+        # Create or get Coordinates objects with latitude and longitude as strings
+        start_coordinates, _ = Coordinates.objects.get_or_create(
+            latitude=start_latitude,
+            longitude=start_longitude,
+            defaults={'removed': False}
+        )
+
+        end_coordinates, _ = Coordinates.objects.get_or_create(
+            latitude=end_latitude,
+            longitude=end_longitude,
+            defaults={'removed': False}
+        )
+
+        # Check if the Sidewalk already exists
+        sidewalk_exists = Sidewalk.objects.filter(
+            start_coordinates=start_coordinates,
+            end_coordinates=end_coordinates
+        ).exists()
+        
+        if not sidewalk_exists:
+            # Create Sidewalk object
+            sidewalk = Sidewalk(
+                accessibility_score=None,
+                adjacent_street=request.data.get('adjacentStreet'),
+                data=request.data.get('data'),
+                start_coordinates=start_coordinates,
+                end_coordinates=end_coordinates
+            )
+
+            try:
+                sidewalk.full_clean()
+                sidewalk.save()
+                return Response(f'Success', status=status.HTTP_201_CREATED)
+            except ValidationError as e:
+                return Response(f'Validation Error: {e}', status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response('Sidewalk already exists', status=status.HTTP_409_CONFLICT)
     
 class SimpleSidewalkView(SidewalkView):
     serializer_class = SimpleSidewalkSerializer
