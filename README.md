@@ -64,17 +64,7 @@ pip install -r requirements.txt
 
 ### 6 - Environment variables
 
-Create a `.env` file in the root of the project directory, and then fill out the following ENV variables:
-
-1. `OPEN_WEATHER_API_KEY=yourapikey`
-2. `LOCAL_DB_HOST=localhost`
-3. `LOCAL_DB_USER=postgres`
-4. `LOCAL_DB_PASSWORD=postgres`
-5. `LOCAL_DB_NAME=lakbai`
-6. `LOCAL_DB_PORT=5440`
-7. `LOCAL_DB_VERSION=13`
-
-Replace `yourapikey` with you actual api key from OpenWeatherMaps, and copy the rest as is
+Create a `.env` file in the root of the project directory, and then fill out the ENV variables based on `.env.template`
 
 **OPTIONAL**: If you want to use a remote database, you can also put your remote db secrets in the `.env` file, and prefix them with `REMOTE` (ex. `REMOTE_DB_NAME`)
 
@@ -152,6 +142,12 @@ Replace the `path/to/file.sql` with the actual file. You can select one of our b
 Sample implementation
 ```
 ./restore_local_db.sh db_backups/2024-10-27_10-51-38.sql
+```
+
+### Running the backend server
+
+```
+python3 manage.py runserver
 ```
 
 ## You are now good to go, happy hacking!
