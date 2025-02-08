@@ -35,7 +35,7 @@ git clone https://github.com/maxellmilay/lakbai.git
 
 ### 2 - Install Python and virtual environment (if not yet installed)
 
-The Python version needs to be at least 3.10
+The Python version needs to be at least 3.12.0
 
 ```
 sudo apt update
