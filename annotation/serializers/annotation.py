@@ -17,10 +17,10 @@ class SimpleSidewalkSerializer(SidewalkSerializer):
 
 
 class SidebarAnnotationsSerializer(AnnotationSerializer):
-    location = SimpleSidewalkSerializer(read_only=True)
+    sidewalk = SimpleSidewalkSerializer(read_only=True)
     class Meta:
         model = AnnotationSerializer.Meta.model
-        fields = ['id', 'updated_on', 'location', 'name']
+        fields = ['id', 'updated_on', 'sidewalk', 'name']
 
 
 class AnnotationNameCheckerSerializer(AnnotationBaseSerializer):

@@ -48,12 +48,12 @@ class Sidewalk(models.Model):
     Attributes:
         accessibility_score (DecimalField): The accessibility score of the sidewalk
         adjacent_street (CharField): The name of the adjacent street.
-        data (JSONField): Stores location data in JSON format.
+        data (JSONField): Stores sidewalk data in JSON format.
         results (JSONField): Stores results data in JSON format.
-        anchor (CharField); The nearest anchor location of the sidewalk
-        start_coordinates (ForeignKey): The starting coordinates of the location.
-        end_coordinates (ForeignKey): The ending coordinates of the location.
-        removed (BooleanField): Indicates if the location has been marked as removed.
+        anchor (CharField); The nearest anchor sidewalk of the sidewalk
+        start_coordinates (ForeignKey): The starting coordinates of the sidewalk.
+        end_coordinates (ForeignKey): The ending coordinates of the sidewalk.
+        removed (BooleanField): Indicates if the sidewalk has been marked as removed.
     """
 
     ANCHOR_A = '123.9419001850121,10.327600060884297'
