@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SidewalkView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView, FileView, AnnotationNameCheckerView, SimpleSidewalkView
+from .views import SidewalkView, AnnotationFormView, AnnotationView, SidebarAnnotationsView, AnnotationImageView, FileView, AnnotationNameCheckerView, SimpleSidewalkView, AnnotationIdView
 
 urlpatterns = [
     path('sidewalks/', SidewalkView.as_view({'get': 'list', 'post': 'create'}), name='sidewalks'),
@@ -9,6 +9,7 @@ urlpatterns = [
     path('annotation-forms/<int:pk>/', AnnotationFormView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='annotation_form'),
     path('annotations/', AnnotationView.as_view({'get': 'list', 'post': 'create'}), name='annotation'),
     path('annotations/<int:pk>/', AnnotationView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='annotation'),
+    path('annotation-ids/<int:pk>/', AnnotationIdView.as_view(), name='annotation_ids'),
     path('side-panel-annotations/', SidebarAnnotationsView.as_view({'get': 'list'}), name='side_panel_annotations'),
     path('annotation-images/', AnnotationImageView.as_view({'get': 'list', 'post': 'create'}), name='annotation_images'),
     path('annotation-images/<int:pk>/', AnnotationImageView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='annotation_image'),

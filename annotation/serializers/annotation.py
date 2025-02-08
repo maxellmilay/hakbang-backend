@@ -1,6 +1,6 @@
 from annotation.base_serializers.annotation import AnnotationBaseSerializer, SidewalkSerializer
 from accounts.serializers import UserSerializer
-
+from rest_framework import serializers
 
 class AnnotationSerializer(AnnotationBaseSerializer):
     annotator = UserSerializer(read_only=True)
@@ -27,3 +27,6 @@ class AnnotationNameCheckerSerializer(AnnotationBaseSerializer):
     class Meta:
         model = AnnotationBaseSerializer.Meta.model
         fields = ['name']
+
+class AnnotationIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()

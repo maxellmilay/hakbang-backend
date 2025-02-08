@@ -1,5 +1,5 @@
 from .base_serializers import SidewalkSerializer, AnnotationFormSerializer, AnnotationImageSerializer, FileSerializer
-from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer, SimpleSidewalkSerializer
+from .serializers.annotation import AnnotationSerializer, SidebarAnnotationsSerializer, AnnotationNameCheckerSerializer, SimpleSidewalkSerializer, AnnotationIdSerializer
 from .models import Sidewalk, AnnotationForm, Annotation, AnnotationImage, File, Coordinates
 from main.utils.generic_api import GenericView
 from annotation.utils.accessibility_score import individual_update_accessibility_scores
@@ -8,6 +8,7 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
 import json
@@ -76,7 +77,26 @@ class SidewalkView(GenericView):
     
 class SimpleSidewalkView(SidewalkView):
     serializer_class = SimpleSidewalkSerializer
+    
+class AnnotationIdView(APIView):
+    def get(self, request, pk):
+        request_serializer = AnnotationIdSerializer(data={"id":pk})
+        
+        print('REQUEST DATA', request.data)
+        
+        if not request_serializer.is_valid():
+            return Response(request_serializer.errors, status=400)
 
+        request_data = request_serializer.data
+        
+        location_id = request_data["id"]
+        
+        annotations = Annotation.objects.filter(sidewalk__id=location_id)
+        
+        annotation_ids = [annotation.id for annotation in annotations]
+        
+        return Response({"annotation_ids": annotation_ids}, status=status.HTTP_200_OK)
+        
 class AnnotationFormView(GenericView):
     queryset = AnnotationForm.objects.filter(removed=False)
     serializer_class = AnnotationFormSerializer
